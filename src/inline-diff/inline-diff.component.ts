@@ -13,10 +13,6 @@ import { IDiffCalculation } from './diff-calculation.interface';
       flex-direction: row;
       border: 1px solid #808080;
       font-family: Consolas, Courier, monospace;
-      width: 911px;
-    }
-    div.inline-diff-margin {
-      width: 101px;
     }
     div.inline-diff-content {
       position: relative;
@@ -32,6 +28,7 @@ import { IDiffCalculation } from './diff-calculation.interface';
       display: flex;
       flex-direction: column;
       align-items: stretch;
+      width: 100%;
     }
     div.inline-diff-old {
       width: 50px;
@@ -59,7 +56,6 @@ import { IDiffCalculation } from './diff-calculation.interface';
     div.inline-diff-text {
       white-space: pre;
       padding-left: 10px;
-      min-width: 800px;
     }
     .inline-diff-delete {
       background-color: #ff8c8c;
@@ -141,9 +137,9 @@ export class InlineDiffComponent implements OnInit, OnChanges {
   private calculateLineDiff(
       diffs: Diff[]): void {
     const diffCalculation: IDiffCalculation = {
-      lines: [],
+      lineInNewText: 1,
       lineInOldText: 1,
-      lineInNewText: 1
+      lines: []
     };
 
     this.isContentEqual = diffs.length === 1 && diffs[0][0] === DiffOp.Equal;

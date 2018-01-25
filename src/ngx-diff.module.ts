@@ -7,11 +7,11 @@ import { InlineDiffComponent } from './inline-diff/inline-diff.component';
   declarations: [
     InlineDiffComponent
   ],
-  imports: [
-    CommonModule
-  ],
   exports: [
     InlineDiffComponent
+  ],
+  imports: [
+    CommonModule
   ],
   providers: [
     DiffMatchPatchService

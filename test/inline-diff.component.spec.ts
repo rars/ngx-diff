@@ -25,10 +25,10 @@ describe('InlineDiffComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ InlineDiffComponent ],
-      schemas: [NO_ERRORS_SCHEMA],
       providers: [
         { provide: DiffMatchPatchService, useClass: DiffMatchPatchServiceMock }
-      ]
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
   }));
