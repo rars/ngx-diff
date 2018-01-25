@@ -1,6 +1,6 @@
 {
   "name": "ngx-diff",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Angular2+ module for comparing text.",
   "main": "ngx-diff.bundle.js",
   "module": "index.js",
