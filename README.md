@@ -14,7 +14,7 @@ Angular 2+ component library for displaying diffs of text. [Demo](https://rars.g
     ```
     import { BrowserModule } from '@angular/platform-browser';
     import { NgModule } from '@angular/core';
-    import { NgxDiffModule } from 'ngx-diff/ngx-diff.module';
+    import { NgxDiffModule } from 'ngx-diff';
     import { AppComponent } from './app.component';
 
     @NgModule({

@@ -12,7 +12,7 @@
     "noStrictGenericChecks": true
   },
   "files": [
-    "./src/ngx-diff.module.ts"
+    "./src/index.ts"
   ],
   "angularCompilerOptions": {
     "skipTemplateCodegen": true
