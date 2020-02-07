@@ -1,20 +1,32 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
     "sourceMap": true,
-    "emitDecoratorMetadata": true,
+    "declaration": false,
+    "downlevelIteration": true,
     "experimentalDecorators": true,
-    "declaration": true,
-    "outDir": "./dist",
-    "noImplicitAny": true,
-    "lib": ["es2015", "dom"],
-    "noStrictGenericChecks": true
+    "module": "esnext",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2015",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "paths": {
+      "ngx-diff": [
+        "dist/ngx-diff/ngx-diff",
+        "dist/ngx-diff"
+      ]
+    }
   },
-  "files": [
-    "./src/index.ts"
-  ],
   "angularCompilerOptions": {
-    "skipTemplateCodegen": true
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true
   }
 }

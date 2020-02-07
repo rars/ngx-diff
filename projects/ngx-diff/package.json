@@ -1,0 +1,15 @@
+{
+  "name": "@pat/ngx-diff",
+  "version": "0.1.1",
+  "publishConfig": {
+    "registry": "https://nexus.picsart.tools/content/repositories/npm_hosted/"
+  },
+  "peerDependencies": {
+    "@angular/common": "^9.0.0",
+    "@angular/core": "^9.0.0",
+    "tslib": "^1.10.0"
+  },
+  "dependencies": {
+    "diff-match-patch-ts": "^0.2.0"
+  }
+}

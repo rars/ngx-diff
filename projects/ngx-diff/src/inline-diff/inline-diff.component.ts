@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { Diff, DiffOp } from 'diff-match-patch-ts';
 import { DiffMatchPatchService } from '../diff-match-patch.service';
 import { IDiffCalculation } from './diff-calculation.interface';
@@ -7,76 +7,78 @@ import { IDiffCalculation } from './diff-calculation.interface';
 // by the client application.
 @Component({
   selector: 'inline-diff',
-  styles: [`
-    div.inline-diff {
-      display: flex;
-      flex-direction: row;
-      border: 1px solid #808080;
-      font-family: Consolas, Courier, monospace;
-    }
-    div.inline-diff-content {
-      position: relative;
-      top: 0px;
-      left: 0px;
-      flex-grow: 1;
-      overflow-x: scroll;
-    }
-    div.inline-diff-content-wrapper {
-      position: absolute;
-      top: 0px;
-      left: 0px;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      width: 100%;
-    }
-    div.inline-diff-old {
-      width: 50px;
-      text-align: center;
-      color: #484848;
-    }
-    div.inline-diff-equal>div.inline-diff-old,
-      div.inline-diff-equal>div.inline-diff-new {
-      background-color: #dedede;
-    }
-    div.inline-diff-insert>div.inline-diff-old,
-      div.inline-diff-insert>div.inline-diff-new {
-      background-color: #8bfb6f;
-    }
-    div.inline-diff-delete>div.inline-diff-old,
-      div.inline-diff-delete>div.inline-diff-new {
-      background-color: #f56868;
-    }
-    div.inline-diff-new {
-      width: 50px;
-      text-align: center;
-      color: #484848;
-      border-right: 1px solid #888888;
-    }
-    div.inline-diff-text {
-      white-space: pre;
-      padding-left: 10px;
-    }
-    .inline-diff-delete {
-      background-color: #ff8c8c;
-    }
-    .inline-diff-insert {
-      background-color: #9dff97;
-    }
-    .inline-diff-delete>div {
-      display: inline-block;
-    }
-    .inline-diff-insert>div {
-      display: inline-block;
-    }
-    .inline-diff-equal>div {
-      display: inline-block;
-    }
-    .dmp-margin-bottom-spacer {
-      height: 20px;
-      background-color: #dedede;
-      border-right: 1px solid #888888;
-    }`
+  styles: [
+    `
+      div.inline-diff {
+        display: flex;
+        flex-direction: row;
+        border: 1px solid #808080;
+        font-family: Consolas, Courier, monospace;
+      }
+      div.inline-diff-content {
+        position: relative;
+        top: 0px;
+        left: 0px;
+        flex-grow: 1;
+        overflow-x: scroll;
+      }
+      div.inline-diff-content-wrapper {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+      }
+      div.inline-diff-old {
+        width: 50px;
+        text-align: center;
+        color: #484848;
+      }
+      div.inline-diff-equal > div.inline-diff-old,
+      div.inline-diff-equal > div.inline-diff-new {
+        background-color: #dedede;
+      }
+      div.inline-diff-insert > div.inline-diff-old,
+      div.inline-diff-insert > div.inline-diff-new {
+        background-color: #8bfb6f;
+      }
+      div.inline-diff-delete > div.inline-diff-old,
+      div.inline-diff-delete > div.inline-diff-new {
+        background-color: #f56868;
+      }
+      div.inline-diff-new {
+        width: 50px;
+        text-align: center;
+        color: #484848;
+        border-right: 1px solid #888888;
+      }
+      div.inline-diff-text {
+        white-space: pre;
+        padding-left: 10px;
+      }
+      .inline-diff-delete {
+        background-color: #ff8c8c;
+      }
+      .inline-diff-insert {
+        background-color: #9dff97;
+      }
+      .inline-diff-delete > div {
+        display: inline-block;
+      }
+      .inline-diff-insert > div {
+        display: inline-block;
+      }
+      .inline-diff-equal > div {
+        display: inline-block;
+      }
+      .dmp-margin-bottom-spacer {
+        height: 20px;
+        background-color: #dedede;
+        border-right: 1px solid #888888;
+      }
+    `
   ],
   template: `
     <div class="inline-diff-no-changes-text" *ngIf="isContentEqual">
@@ -85,15 +87,19 @@ import { IDiffCalculation } from './diff-calculation.interface';
     <div class="inline-diff" *ngIf="!isContentEqual">
       <div class="inline-diff-margin">
         <div [ngClass]="lineDiff[0]" *ngFor="let lineDiff of calculatedDiff">
-          <div class="inline-diff-old">{{lineDiff[1]}}</div><!-- No space
-        --><div class="inline-diff-new">{{lineDiff[2]}}</div>
+          <div class="inline-diff-old">{{ lineDiff[1] }}</div>
+          <!-- No space
+        -->
+          <div class="inline-diff-new">{{ lineDiff[2] }}</div>
         </div>
         <div class="dmp-margin-bottom-spacer"></div>
-      </div><!-- No space
-    --><div class="inline-diff-content">
+      </div>
+      <!-- No space
+    -->
+      <div class="inline-diff-content">
         <div class="inline-diff-content-wrapper">
           <div [ngClass]="lineDiff[0]" *ngFor="let lineDiff of calculatedDiff">
-            <div class="inline-diff-text">{{lineDiff[3]}}</div>
+            <div class="inline-diff-text">{{ lineDiff[3] }}</div>
           </div>
         </div>
       </div>
@@ -110,11 +116,10 @@ export class InlineDiffComponent implements OnInit, OnChanges {
   @Input()
   public lineContextSize: number;
 
-  public calculatedDiff: Array<[string, string, string]>;
+  public calculatedDiff: Array<[string, string, string, string]>;
   public isContentEqual: boolean;
 
-  public constructor(
-      private dmp: DiffMatchPatchService) {}
+  public constructor(private dmp: DiffMatchPatchService) {}
 
   public ngOnInit(): void {
     this.updateHtml();
@@ -134,8 +139,7 @@ export class InlineDiffComponent implements OnInit, OnChanges {
     this.calculateLineDiff(this.dmp.computeLineDiff(this.oldText, this.newText));
   }
 
-  private calculateLineDiff(
-      diffs: Diff[]): void {
+  private calculateLineDiff(diffs: Diff[]): void {
     const diffCalculation: IDiffCalculation = {
       lineInNewText: 1,
       lineInOldText: 1,
@@ -194,10 +198,11 @@ export class InlineDiffComponent implements OnInit, OnChanges {
    * in this case the calculateLineDiff method returns early.
    */
   private outputEqualDiff(
-      diffLines: string[],
-      diffCalculation: IDiffCalculation,
-      isFirstDiff: boolean,
-      isLastDiff: boolean): void {
+    diffLines: string[],
+    diffCalculation: IDiffCalculation,
+    isFirstDiff: boolean,
+    isLastDiff: boolean
+  ): void {
     if (this.lineContextSize && diffLines.length > this.lineContextSize) {
       if (isFirstDiff) {
         // Take the last 'lineContextSize' lines from the first diff
@@ -214,12 +219,15 @@ export class InlineDiffComponent implements OnInit, OnChanges {
 
         // Output a special line indicating that some content is equal and has been skipped
         diffCalculation.lines.push(['inline-diff-equal', '...', '...', '...']);
-        const numberOfSkippedLines = diffLines.length - (2 * this.lineContextSize);
+        const numberOfSkippedLines = diffLines.length - 2 * this.lineContextSize;
         diffCalculation.lineInOldText += numberOfSkippedLines;
         diffCalculation.lineInNewText += numberOfSkippedLines;
 
         // Take the last 'lineContextSize' lines from this diff to provide context for the next diff
-        this.outputEqualDiffLines(diffLines.slice(diffLines.length - this.lineContextSize), diffCalculation);
+        this.outputEqualDiffLines(
+          diffLines.slice(diffLines.length - this.lineContextSize),
+          diffCalculation
+        );
         // This if branch has already output the diff lines so we return early to avoid outputting the lines
         // at the end of the method.
         return;
@@ -228,9 +236,7 @@ export class InlineDiffComponent implements OnInit, OnChanges {
     this.outputEqualDiffLines(diffLines, diffCalculation);
   }
 
-  private outputEqualDiffLines(
-      diffLines: string[],
-      diffCalculation: IDiffCalculation): void {
+  private outputEqualDiffLines(diffLines: string[], diffCalculation: IDiffCalculation): void {
     for (const line of diffLines) {
       diffCalculation.lines.push([
         'inline-diff-equal',
@@ -243,20 +249,26 @@ export class InlineDiffComponent implements OnInit, OnChanges {
     }
   }
 
-  private outputDeleteDiff(
-      diffLines: string[],
-      diffCalculation: IDiffCalculation): void {
+  private outputDeleteDiff(diffLines: string[], diffCalculation: IDiffCalculation): void {
     for (const line of diffLines) {
-      diffCalculation.lines.push(['inline-diff-delete', `${diffCalculation.lineInOldText}`, '-', line]);
+      diffCalculation.lines.push([
+        'inline-diff-delete',
+        `${diffCalculation.lineInOldText}`,
+        '-',
+        line
+      ]);
       diffCalculation.lineInOldText++;
     }
   }
 
-  private outputInsertDiff(
-      diffLines: string[],
-      diffCalculation: IDiffCalculation): void {
+  private outputInsertDiff(diffLines: string[], diffCalculation: IDiffCalculation): void {
     for (const line of diffLines) {
-      diffCalculation.lines.push(['inline-diff-insert', '-', `${diffCalculation.lineInNewText}`, line]);
+      diffCalculation.lines.push([
+        'inline-diff-insert',
+        '-',
+        `${diffCalculation.lineInNewText}`,
+        line
+      ]);
       diffCalculation.lineInNewText++;
     }
   }
