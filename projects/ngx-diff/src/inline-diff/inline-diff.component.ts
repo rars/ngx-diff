@@ -108,18 +108,21 @@ import { IDiffCalculation } from './diff-calculation.interface';
 })
 export class InlineDiffComponent implements OnInit, OnChanges {
   @Input()
-  public oldText: string | number | boolean;
+  public oldText: string | number | boolean | undefined;
   @Input()
-  public newText: string | number | boolean;
+  public newText: string | number | boolean | undefined;
   // The number of lines of context to provide either side of a DiffOp.Insert or DiffOp.Delete diff.
   // Context is taken from a DiffOp.Equal section.
   @Input()
-  public lineContextSize: number;
+  public lineContextSize: number | undefined;
 
   public calculatedDiff: Array<[string, string, string, string]>;
   public isContentEqual: boolean;
 
-  public constructor(private dmp: DiffMatchPatchService) {}
+  public constructor(private dmp: DiffMatchPatchService) {
+    this.calculatedDiff = [];
+    this.isContentEqual = false;
+  }
 
   public ngOnInit(): void {
     this.updateHtml();
@@ -136,7 +139,7 @@ export class InlineDiffComponent implements OnInit, OnChanges {
     if (typeof this.newText === 'number' || typeof this.newText === 'boolean') {
       this.newText = this.newText.toString();
     }
-    this.calculateLineDiff(this.dmp.computeLineDiff(this.oldText, this.newText));
+    this.calculateLineDiff(this.dmp.computeLineDiff(this.oldText ?? '', this.newText ?? ''));
   }
 
   private calculateLineDiff(diffs: Diff[]): void {

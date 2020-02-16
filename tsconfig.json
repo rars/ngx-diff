@@ -9,20 +9,21 @@
     "experimentalDecorators": true,
     "module": "esnext",
     "moduleResolution": "node",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
     "importHelpers": true,
     "target": "es2015",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2018",
-      "dom"
-    ],
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2018", "dom"],
     "paths": {
-      "ngx-diff": [
-        "dist/ngx-diff/ngx-diff",
-        "dist/ngx-diff"
-      ]
+      "ngx-diff": ["dist/ngx-diff/ngx-diff", "dist/ngx-diff"]
     }
   },
   "angularCompilerOptions": {

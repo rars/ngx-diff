@@ -1,12 +1,13 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { inject, async, TestBed, ComponentFixture } from '@angular/core/testing';
+import { async, TestBed, ComponentFixture } from '@angular/core/testing';
 import { Diff, DiffOp } from 'diff-match-patch-ts';
 
 import { InlineDiffComponent } from './inline-diff.component';
 import { DiffMatchPatchService } from '../diff-match-patch.service';
 
 class DiffMatchPatchServiceMock {
-  public computeLineDiff(oldText: string, newText: string): Diff[] {
+  // tslint:disable-next-line:variable-name
+  public computeLineDiff(_oldText: string, _newText: string): Diff[] {
     return [
       [DiffOp.Equal, 'Diff One A\r\nDiff One B\r\n'],
       [DiffOp.Insert, 'Diff Two A\r\nDiff Two B\r\n'],
