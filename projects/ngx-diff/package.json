@@ -2,9 +2,10 @@
   "name": "ngx-diff",
   "version": "0.1.1",
   "peerDependencies": {
-    "@angular/common": "^9.0.0",
-    "@angular/core": "^9.0.0",
-    "tslib": "^1.10.0"
+    "@angular/common": ">=9.0.0",
+    "@angular/core": ">=9.0.0",
+    "tslib": "^1.10.0",
+    "diff-match-patch-ts": ">=0.2.0"
   },
   "dependencies": {
     "diff-match-patch-ts": "^0.2.0"
