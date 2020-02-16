@@ -1,0 +1,28 @@
+{
+  "name": "ngx-diff",
+  "version": "0.1.1",
+  "peerDependencies": {
+    "@angular/common": ">=9.0.0",
+    "@angular/core": ">=9.0.0",
+    "tslib": "^1.10.0",
+    "diff-match-patch-ts": ">=0.2.0"
+  },
+  "dependencies": {
+    "diff-match-patch-ts": "^0.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rars/ngx-diff"
+  },
+  "keywords": [
+    "Angular2",
+    "ng2",
+    "diff"
+  ],
+  "author": "Richard Russell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rars/ngx-diff/issues"
+  },
+  "homepage": "https://github.com/rars/ngx-diff#readme"
+}

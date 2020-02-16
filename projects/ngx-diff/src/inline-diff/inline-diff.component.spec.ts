@@ -1,14 +1,13 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { inject, async, TestBed, ComponentFixture } from '@angular/core/testing';
+import { async, TestBed, ComponentFixture } from '@angular/core/testing';
 import { Diff, DiffOp } from 'diff-match-patch-ts';
 
-import { InlineDiffComponent } from '../src/inline-diff/inline-diff.component';
-import { DiffMatchPatchService } from '../src/diff-match-patch.service';
+import { InlineDiffComponent } from './inline-diff.component';
+import { DiffMatchPatchService } from '../diff-match-patch.service';
 
 class DiffMatchPatchServiceMock {
-  public computeLineDiff(
-      oldText: string,
-      newText: string): Diff[] {
+  // tslint:disable-next-line:variable-name
+  public computeLineDiff(_oldText: string, _newText: string): Diff[] {
     return [
       [DiffOp.Equal, 'Diff One A\r\nDiff One B\r\n'],
       [DiffOp.Insert, 'Diff Two A\r\nDiff Two B\r\n'],
@@ -24,13 +23,10 @@ describe('InlineDiffComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ InlineDiffComponent ],
-      providers: [
-        { provide: DiffMatchPatchService, useClass: DiffMatchPatchServiceMock }
-      ],
+      declarations: [InlineDiffComponent],
+      providers: [{ provide: DiffMatchPatchService, useClass: DiffMatchPatchServiceMock }],
       schemas: [NO_ERRORS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -50,14 +46,10 @@ describe('InlineDiffComponent', () => {
 
   it('should have correct line numbers', () => {
     const leftLineNumbers = component.calculatedDiff.map(x => x[1]);
-    expect(leftLineNumbers).toEqual([
-      '1', '2', '-', '-', '3', '4', '5', '6'
-    ]);
+    expect(leftLineNumbers).toEqual(['1', '2', '-', '-', '3', '4', '5', '6']);
 
     const rightLineNumbers = component.calculatedDiff.map(x => x[2]);
-    expect(rightLineNumbers).toEqual([
-      '1', '2', '3', '4', '-', '-', '5', '6'
-    ]);
+    expect(rightLineNumbers).toEqual(['1', '2', '3', '4', '-', '-', '5', '6']);
   });
 
   it('should have correct class annotations', () => {
