@@ -1,11 +1,11 @@
 {
   "name": "ngx-diff",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build ngx-jwt --prod",
-    "test": "ng test ngx-jwt",
+    "build": "ng build ngx-diff --prod",
+    "test": "ng test ngx-diff",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
