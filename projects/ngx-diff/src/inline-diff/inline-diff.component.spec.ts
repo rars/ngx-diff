@@ -1,5 +1,5 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, TestBed, ComponentFixture } from '@angular/core/testing';
+import { TestBed, ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { Diff, DiffOp } from 'diff-match-patch-ts';
 
 import { InlineDiffComponent } from './inline-diff.component';
@@ -21,7 +21,7 @@ describe('InlineDiffComponent', () => {
   let component: InlineDiffComponent;
   let fixture: ComponentFixture<InlineDiffComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [InlineDiffComponent],
       providers: [{ provide: DiffMatchPatchService, useClass: DiffMatchPatchServiceMock }],
