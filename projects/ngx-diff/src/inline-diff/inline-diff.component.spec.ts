@@ -6,7 +6,7 @@ import { InlineDiffComponent } from './inline-diff.component';
 import { DiffMatchPatchService } from '../diff-match-patch.service';
 
 class DiffMatchPatchServiceMock {
-  // tslint:disable-next-line:variable-name
+  // eslint-disable-next-line @typescript-eslint/naming-convention, no-underscore-dangle, id-blacklist, id-match
   public computeLineDiff(_oldText: string, _newText: string): Diff[] {
     return [
       [DiffOp.Equal, 'Diff One A\r\nDiff One B\r\n'],
