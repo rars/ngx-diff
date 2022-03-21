@@ -7,7 +7,6 @@
     "diff-match-patch-ts": ">=0.2.0"
   },
   "dependencies": {
-    "diff-match-patch-ts": "^0.2.0",
     "tslib": "^2.0.0"
   },
   "repository": {
