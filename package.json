@@ -26,7 +26,7 @@
     "diff-match-patch-ts": "^0.2.0",
     "font-awesome": "^4.7.0",
     "jquery": "^3.5.1",
-    "ngx-diff": "^0.4.0",
+    "ngx-diff": "^1.0.0",
     "popper.js": "^1.12.9",
     "rxjs": "^6.6.3",
     "simple-line-icons": "^2.5.5",
