@@ -2,8 +2,8 @@
   "name": "ngx-diff",
   "version": "0.4.0",
   "peerDependencies": {
-    "@angular/common": ">=11.0.0",
-    "@angular/core": ">=11.0.0",
+    "@angular/common": ">=13.0.0",
+    "@angular/core": ">=13.0.0",
     "diff-match-patch-ts": ">=0.2.0"
   },
   "dependencies": {

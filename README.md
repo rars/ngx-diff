@@ -44,6 +44,7 @@ Angular 2+ component library for displaying diffs of text. [Demo](https://rars.g
 | 9               | 0.2.0            |
 | 10              | 0.3.0            |
 | 11              | 0.4.0            |
+| 13              | 1.0.0            |
 
 ## Contributions welcome!
 
