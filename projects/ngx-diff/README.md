@@ -1,25 +1,55 @@
-# NgxDiff
+# ngx-diff
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.0.0.
+[![Build Status](https://travis-ci.org/rars/ngx-diff.svg?branch=master)](https://travis-ci.org/rars/ngx-diff)
 
-## Code scaffolding
+Angular 2+ component library for displaying diffs of text. [Demo](https://rars.github.io/ngx-diff/).
 
-Run `ng generate component component-name --project ngx-diff` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project ngx-diff`.
+## Quickstart
 
-> Note: Don't forget to add `--project ngx-diff` or else it will be added to the default project in your `angular.json` file.
+1. Install `ngx-diff` modules from npm:
+   ```
+   npm install ngx-diff diff-match-patch-ts --save
+   ```
+2. Import `NgxDiffModule` to your app:
 
-## Build
+   ```
+   import { BrowserModule } from '@angular/platform-browser';
+   import { NgModule } from '@angular/core';
+   import { NgxDiffModule } from 'ngx-diff';
+   import { AppComponent } from './app.component';
 
-Run `ng build ngx-diff` to build the project. The build artifacts will be stored in the `dist/` directory.
+   @NgModule({
+     declarations: [
+       AppComponent
+     ],
+     imports: [
+       BrowserModule,
+       NgxDiffModule
+     ],
+     providers: [],
+     bootstrap: [AppComponent]
+   })
+   export class AppModule { }
+   ```
 
-## Publishing
+3. Use the `inline-diff` component by setting the `oldText` and `newText` attributes:
+   ```
+   <inline-diff [oldText]="oldDocumentContents" [newText]="newDocumentContents" [lineContextSize]="4"></inline-diff>
+   ```
 
-After building your library with `ng build --prod ngx-diff`, go to the dist folder `cd dist/ngx-diff` and run `npm publish`.
+## Version history
 
-## Running unit tests
+| Angular Version | ngx-diff Version |
+| --------------- | ---------------- |
+| 9               | 0.2.0            |
+| 10              | 0.3.0            |
+| 11              | 0.4.0            |
+| 13              | 1.0.0            |
 
-Run `ng test ngx-diff` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Contributions welcome!
 
-## Further help
+If you have a feature or improvement you would like to see included, please raise an issue or a PR and I will review.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+## License
+
+See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
