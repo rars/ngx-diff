@@ -2,6 +2,8 @@
  * Public API Surface of ngx-diff
  */
 
-export { DiffMatchPatchService } from './lib/services/diff-match-patch/diff-match-patch.service';
-export { InlineDiffComponent } from './lib/components/inline-diff/inline-diff.component';
-export { NgxDiffModule } from './ngx-diff.module';
+export * from './lib/services/diff-match-patch/diff-match-patch.service';
+export * from './lib/components/inline-diff/inline-diff.component';
+export * from './lib/common/line-select-event';
+export * from './lib/common/line-diff-type';
+export * from './ngx-diff.module';

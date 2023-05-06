@@ -2,6 +2,8 @@ import { Diff, DiffOp } from 'diff-match-patch-ts';
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { LineDiffType } from '../../common/line-diff-type';
+import { LineNumberPipe } from '../../pipes/line-number/line-number.pipe';
 import { DiffMatchPatchService } from '../../services/diff-match-patch/diff-match-patch.service';
 import { InlineDiffComponent } from './inline-diff.component';
 
@@ -23,7 +25,7 @@ describe('InlineDiffComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [InlineDiffComponent],
+      declarations: [InlineDiffComponent, LineNumberPipe],
       providers: [{ provide: DiffMatchPatchService, useClass: DiffMatchPatchServiceMock }],
     }).compileComponents();
 
@@ -42,23 +44,23 @@ describe('InlineDiffComponent', () => {
 
   it('should have correct line numbers', () => {
     const leftLineNumbers = component.calculatedDiff.map((x) => x[1]);
-    expect(leftLineNumbers).toEqual(['1', '2', '-', '-', '3', '4', '5', '6']);
+    expect(leftLineNumbers).toEqual([1, 2, null, null, 3, 4, 5, 6]);
 
     const rightLineNumbers = component.calculatedDiff.map((x) => x[2]);
-    expect(rightLineNumbers).toEqual(['1', '2', '3', '4', '-', '-', '5', '6']);
+    expect(rightLineNumbers).toEqual([1, 2, 3, 4, null, null, 5, 6]);
   });
 
   it('should have correct class annotations', () => {
     const classes = component.calculatedDiff.map((x) => x[0]);
     expect(classes).toEqual([
-      'inline-diff-equal',
-      'inline-diff-equal',
-      'inline-diff-insert',
-      'inline-diff-insert',
-      'inline-diff-delete',
-      'inline-diff-delete',
-      'inline-diff-equal',
-      'inline-diff-equal',
+      LineDiffType.Equal,
+      LineDiffType.Equal,
+      LineDiffType.Insert,
+      LineDiffType.Insert,
+      LineDiffType.Delete,
+      LineDiffType.Delete,
+      LineDiffType.Equal,
+      LineDiffType.Equal,
     ]);
   });
 

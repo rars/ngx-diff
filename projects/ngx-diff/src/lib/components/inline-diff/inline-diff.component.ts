@@ -1,9 +1,13 @@
 import { Diff, DiffOp } from 'diff-match-patch-ts';
 
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 
-import { IDiffCalculation } from '../../../inline-diff/diff-calculation.interface';
+import { IDiffCalculation } from '../../common/diff-calculation.interface';
+import { LineDiffType } from '../../common/line-diff-type';
+import { LineSelectEvent } from '../../common/line-select-event';
 import { DiffMatchPatchService } from '../../services/diff-match-patch/diff-match-patch.service';
+
+type LineDiff = [LineDiffType, number | null, number | null, string, string];
 
 @Component({
   selector: 'inline-diff',
@@ -20,7 +24,11 @@ export class InlineDiffComponent implements OnInit, OnChanges {
   @Input()
   public lineContextSize: number | undefined;
 
-  public calculatedDiff: Array<[string, string, string, string]>;
+  @Output()
+  public selectedLineChange = new EventEmitter<LineSelectEvent>();
+
+  public calculatedDiff: LineDiff[];
+  public selectedLine?: LineDiff;
   public isContentEqual: boolean;
 
   public constructor(private readonly dmp: DiffMatchPatchService) {
@@ -34,6 +42,18 @@ export class InlineDiffComponent implements OnInit, OnChanges {
 
   public ngOnChanges(): void {
     this.updateHtml();
+  }
+
+  public selectLine(index: number, lineDiff: LineDiff): void {
+    this.selectedLine = lineDiff;
+    const [type, lineNumberInOldText, lineNumberInNewText, line] = lineDiff;
+    this.selectedLineChange.emit({
+      index,
+      type,
+      lineNumberInOldText,
+      lineNumberInNewText,
+      line,
+    });
   }
 
   private updateHtml(): void {
@@ -87,7 +107,11 @@ export class InlineDiffComponent implements OnInit, OnChanges {
       }
     }
 
-    this.calculatedDiff = diffCalculation.lines;
+    this.calculatedDiff = diffCalculation.lines.map(
+      ([type, lineNumberInOldText, lineNumberInNewText, line]) => {
+        return [type, lineNumberInOldText, lineNumberInNewText, line, this.getCssClass(type)];
+      },
+    );
   }
 
   /* If the number of diffLines is greater than lineContextSize then we may need to adjust the diff
@@ -125,7 +149,7 @@ export class InlineDiffComponent implements OnInit, OnChanges {
         this.outputEqualDiffLines(diffLines.slice(0, this.lineContextSize), diffCalculation);
 
         // Output a special line indicating that some content is equal and has been skipped
-        diffCalculation.lines.push(['inline-diff-equal', '...', '...', '...']);
+        diffCalculation.lines.push([LineDiffType.Equal, null, null, '...']);
         const numberOfSkippedLines = diffLines.length - 2 * this.lineContextSize;
         diffCalculation.lineInOldText += numberOfSkippedLines;
         diffCalculation.lineInNewText += numberOfSkippedLines;
@@ -146,9 +170,9 @@ export class InlineDiffComponent implements OnInit, OnChanges {
   private outputEqualDiffLines(diffLines: string[], diffCalculation: IDiffCalculation): void {
     for (const line of diffLines) {
       diffCalculation.lines.push([
-        'inline-diff-equal',
-        `${diffCalculation.lineInOldText}`,
-        `${diffCalculation.lineInNewText}`,
+        LineDiffType.Equal,
+        diffCalculation.lineInOldText,
+        diffCalculation.lineInNewText,
         line,
       ]);
       diffCalculation.lineInOldText++;
@@ -158,25 +182,28 @@ export class InlineDiffComponent implements OnInit, OnChanges {
 
   private outputDeleteDiff(diffLines: string[], diffCalculation: IDiffCalculation): void {
     for (const line of diffLines) {
-      diffCalculation.lines.push([
-        'inline-diff-delete',
-        `${diffCalculation.lineInOldText}`,
-        '-',
-        line,
-      ]);
+      diffCalculation.lines.push([LineDiffType.Delete, diffCalculation.lineInOldText, null, line]);
       diffCalculation.lineInOldText++;
     }
   }
 
   private outputInsertDiff(diffLines: string[], diffCalculation: IDiffCalculation): void {
     for (const line of diffLines) {
-      diffCalculation.lines.push([
-        'inline-diff-insert',
-        '-',
-        `${diffCalculation.lineInNewText}`,
-        line,
-      ]);
+      diffCalculation.lines.push([LineDiffType.Insert, null, diffCalculation.lineInNewText, line]);
       diffCalculation.lineInNewText++;
+    }
+  }
+
+  private getCssClass(type: LineDiffType): string {
+    switch (type) {
+      case LineDiffType.Equal:
+        return 'inline-diff-equal';
+      case LineDiffType.Insert:
+        return 'inline-diff-insert';
+      case LineDiffType.Delete:
+        return 'inline-diff-delete';
+      default:
+        return 'unknown';
     }
   }
 }
