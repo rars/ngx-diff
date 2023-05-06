@@ -1,0 +1,23 @@
+<div class="inline-diff-no-changes-text" *ngIf="isContentEqual">
+    There are no changes to display.
+</div>
+<div class="inline-diff" *ngIf="!isContentEqual">
+    <div class="inline-diff-margin">
+        <div [ngClass]="lineDiff[0]" *ngFor="let lineDiff of calculatedDiff">
+            <div class="inline-diff-old">{{ lineDiff[1] }}</div>
+            <!-- No space
+      -->
+            <div class="inline-diff-new">{{ lineDiff[2] }}</div>
+        </div>
+        <div class="dmp-margin-bottom-spacer"></div>
+    </div>
+    <!-- No space
+  -->
+    <div class="inline-diff-content">
+        <div class="inline-diff-content-wrapper">
+            <div [ngClass]="lineDiff[0]" *ngFor="let lineDiff of calculatedDiff">
+                <div class="inline-diff-text">{{ lineDiff[3] }}</div>
+            </div>
+        </div>
+    </div>
+</div>

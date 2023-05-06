@@ -1,0 +1,83 @@
+div.inline-diff {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #808080;
+    font-family: Consolas, Courier, monospace;
+}
+
+div.inline-diff-content {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    flex-grow: 1;
+    overflow-x: scroll;
+}
+
+div.inline-diff-content-wrapper {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+}
+
+div.inline-diff-old {
+    width: 50px;
+    text-align: center;
+    color: #484848;
+}
+
+div.inline-diff-equal>div.inline-diff-old,
+div.inline-diff-equal>div.inline-diff-new {
+    background-color: #dedede;
+}
+
+div.inline-diff-insert>div.inline-diff-old,
+div.inline-diff-insert>div.inline-diff-new {
+    background-color: #8bfb6f;
+}
+
+div.inline-diff-delete>div.inline-diff-old,
+div.inline-diff-delete>div.inline-diff-new {
+    background-color: #f56868;
+}
+
+div.inline-diff-new {
+    width: 50px;
+    text-align: center;
+    color: #484848;
+    border-right: 1px solid #888888;
+}
+
+div.inline-diff-text {
+    white-space: pre;
+    padding-left: 10px;
+}
+
+.inline-diff-delete {
+    background-color: #ff8c8c;
+}
+
+.inline-diff-insert {
+    background-color: #9dff97;
+}
+
+.inline-diff-delete>div {
+    display: inline-block;
+}
+
+.inline-diff-insert>div {
+    display: inline-block;
+}
+
+.inline-diff-equal>div {
+    display: inline-block;
+}
+
+.dmp-margin-bottom-spacer {
+    height: 20px;
+    background-color: #dedede;
+    border-right: 1px solid #888888;
+}
