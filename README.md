@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/rars/ngx-diff.svg?branch=master)](https://travis-ci.org/rars/ngx-diff)
 
-Angular 2+ component library for displaying diffs of text. [Demo](https://rars.github.io/ngx-diff/).
+Angular component library for displaying diffs of text. [Demo](https://rars.github.io/ngx-diff/).
 
 ## Quickstart
 
@@ -45,6 +45,7 @@ Angular 2+ component library for displaying diffs of text. [Demo](https://rars.g
 | 10              | 0.3.0            |
 | 11              | 0.4.0            |
 | 13              | 1.0.0            |
+| 14              | 2.0.0            |
 
 ## Contributions welcome!
 

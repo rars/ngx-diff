@@ -154,7 +154,6 @@
       }
     }
   },
-  "defaultProject": "ngx-diff-demo",
   "cli": {
     "analytics": "3c2711c5-4843-4cca-a328-5806ff26cc55"
   }
