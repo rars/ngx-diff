@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/rars/ngx-diff/compare/v2.0.0...v3.0.0) (2023-05-07)
+
+
+### Features
+
+* **ngx-diff:** add CSS variables for customising appearance of diff ([5b4b818](https://github.com/rars/ngx-diff/commit/5b4b81803aae4a7b210babfd5478158022122238))
+* **ngx-jwt:** add selectedLineChange output event and allow lines to be selected ([002e8db](https://github.com/rars/ngx-diff/commit/002e8dbb0db765edc8d578c6c507f0420d84b9a1))
+* **ngx-jwt:** mark DiffMatchPatchService as providedIn root ([dd13fab](https://github.com/rars/ngx-diff/commit/dd13fabeedb8546bdc0f0c1bacc33cbaca06d682))
+
 ## [2.0.0](https://github.com/rars/ngx-diff/compare/v1.0.0...v2.0.0) (2023-05-06)
 
 
