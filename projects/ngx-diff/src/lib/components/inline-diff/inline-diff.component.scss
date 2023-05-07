@@ -1,102 +1,121 @@
+:host {
+  --ngx-diff-border-color: #888888;
+  --ngx-diff-font-size: 1rem;
+  --ngx-diff-font-family: Consolas, Courier, monospace;
+  --ngx-diff-font-color: #000000;
+  --ngx-diff-line-number-font-color: #484848;
+  --ngx-diff-line-number-hover-font-color: #ffffff;
+  --ngx-diff-selected-border-color: #ff8000;
+  --ngx-diff-inserted-background-color: #9dff97;
+  --ngx-diff-deleted-background-color: #ff8c8c;
+  --ngx-diff-equal-background-color: #ffffff;
+  --ngx-diff-margin-background-color: #dedede;
+  --ngx-diff-line-number-width: 2rem;
+  --ngx-diff-border-width: 1px;
+  --ngx-diff-line-left-padding: 1rem;
+  --ngx-diff-bottom-spacer-height: 1rem;
+}
+
 div.inline-diff {
-    display: flex;
-    flex-direction: row;
-    border: 1px solid #808080;
-    font-family: Consolas, Courier, monospace;
+  display: flex;
+  flex-direction: row;
+  border: var(--ngx-diff-border-width) solid var(--ngx-diff-border-color);
+  font-family: var(--ngx-diff-font-family);
 }
 
 div.inline-diff-content {
-    position: relative;
-    top: 0px;
-    left: 0px;
-    flex-grow: 1;
-    overflow-x: scroll;
+  position: relative;
+  top: 0px;
+  left: 0px;
+  flex-grow: 1;
+  overflow-x: scroll;
 }
 
 div.inline-diff-content-wrapper {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
 }
 
 div.inline-diff-old {
-    width: 50px;
-    text-align: center;
-}
-
-div.inline-diff-equal>div.inline-diff-old,
-div.inline-diff-equal>div.inline-diff-new {
-    background-color: #dedede;
-}
-
-div.inline-diff-insert>div.inline-diff-old,
-div.inline-diff-insert>div.inline-diff-new {
-    background-color: #8bfb6f;
-}
-
-div.inline-diff-delete>div.inline-diff-old,
-div.inline-diff-delete>div.inline-diff-new {
-    background-color: #f56868;
+  width: var(--ngx-diff-line-number-width);
+  text-align: center;
+  font-size: var(--ngx-diff-font-size);
 }
 
 div.inline-diff-new {
-    width: 50px;
-    text-align: center;
-    border-right: 1px solid #888888;
+  width: var(--ngx-diff-line-number-width);
+  text-align: center;
+  border-right: var(--ngx-diff-border-width) solid var(--border-color);
+  font-size: var(--ngx-diff-font-size);
 }
 
 div.inline-diff-text {
-    white-space: pre;
-    padding-left: 10px;
+  white-space: pre;
+  padding-left: var(--ngx-diff-line-left-padding);
+  font-size: var(--ngx-diff-font-size);
+  color: var(--ngx-diff-font-color);
+}
+
+.inline-diff-equal {
+  background-color: var(--ngx-diff-margin-background-color);
+
+  &.line-content {
+    background-color: var(--ngx-diff-equal-background-color);
+  }
 }
 
 .inline-diff-delete {
-    background-color: #ff8c8c;
+  background-color: var(--ngx-diff-deleted-background-color);
 }
 
 .inline-diff-insert {
-    background-color: #9dff97;
+  background-color: var(--ngx-diff-inserted-background-color);
 }
 
-.inline-diff-delete>div {
-    display: inline-block;
+.inline-diff-delete > div {
+  display: inline-block;
 }
 
-.inline-diff-insert>div {
-    display: inline-block;
+.inline-diff-insert > div {
+  display: inline-block;
 }
 
-.inline-diff-equal>div {
-    display: inline-block;
+.inline-diff-equal > div {
+  display: inline-block;
 }
 
 .dmp-margin-bottom-spacer {
-    height: 20px;
-    background-color: #dedede;
-    border-right: 1px solid #888888;
+  height: var(--ngx-diff-bottom-spacer-height);
+  background-color: var(--ngx-diff-margin-background-color);
+  border-right: var(--ngx-diff-border-width) solid var(--border-color);
+
+  &.line-content {
+    background-color: var(--ngx-diff-equal-background-color);
+  }
 }
 
 .line-selector {
-    color: #484848;
+  color: var(--ngx-diff-line-number-font-color);
 
-    &:hover {
-        cursor: pointer;
-        color: mix(white, #484848, 30%);
-    }
+  &:hover {
+    cursor: pointer;
+    color: var(--ngx-diff-line-number-hover-font-color);
+  }
 
-    &.selected {
-        border-top: 1px solid red;
-        border-left: 1px solid red;
-        border-bottom: 1px solid red;
-    }
+  &.selected {
+    border-top: var(--ngx-diff-border-width) solid var(--ngx-diff-selected-border-color);
+    border-left: var(--ngx-diff-border-width) solid var(--ngx-diff-selected-border-color);
+    border-bottom: var(--ngx-diff-border-width) solid var(--ngx-diff-selected-border-color);
+  }
 }
 
 .line-content.selected {
-    border-top: 1px solid red;
-    border-right: 1px solid red;
-    border-bottom: 1px solid red;
+  border-top: var(--ngx-diff-border-width) solid var(--ngx-diff-selected-border-color);
+  border-right: var(--ngx-diff-border-width) solid var(--ngx-diff-selected-border-color);
+  border-bottom: var(--ngx-diff-border-width) solid var(--ngx-diff-selected-border-color);
 }
