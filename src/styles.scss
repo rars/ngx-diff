@@ -1,1 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root .my-inline-diff-theme {
+    --ngx-diff-border-color: yellow;
+    --ngx-diff-selected-border-color: blue;
+    --ngx-diff-font-family: Consolas;
+    --ngx-diff-line-number-hover-font-color: white;
+    --ngx-diff-line-number-width: 2rem;
+    --ngx-diff-font-size: 1rem;
+    --ngx-diff-line-left-padding: 1rem;
+    --ngx-diff-bottom-spacer-height: 1rem;
+
+
+}
+
+
+:root .dark-theme .my-inline-diff-theme {
+    --ngx-diff-border-color: magenta;
+    --ngx-diff-selected-border-color: cyan;
+    --ngx-diff-font-family: Consolas;
+    --ngx-diff-equal-background-color: grey;
+    --ngx-diff-font-color: indigo;
+    --ngx-diff-border-width: 4px;
+}

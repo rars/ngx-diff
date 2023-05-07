@@ -1,5 +1,6 @@
 <div>
   <inline-diff
+    class="my-inline-diff-theme"
     [oldText]="oldText"
     [newText]="newText"
     [lineContextSize]="4"
@@ -7,4 +8,16 @@
     (selectedLineChange)="selectedLineChange($event)"
   >
   </inline-diff>
+
+  <div class="dark-theme">
+    <inline-diff
+      class="my-inline-diff-theme"
+      [oldText]="oldText"
+      [newText]="newText"
+      [lineContextSize]="4"
+      style="width: 100%"
+      (selectedLineChange)="selectedLineChange($event)"
+    >
+    </inline-diff>
+  </div>
 </div>
