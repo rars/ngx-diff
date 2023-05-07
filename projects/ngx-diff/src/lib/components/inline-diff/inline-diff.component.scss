@@ -26,7 +26,6 @@ div.inline-diff-content-wrapper {
 div.inline-diff-old {
     width: 50px;
     text-align: center;
-    color: #484848;
 }
 
 div.inline-diff-equal>div.inline-diff-old,
@@ -47,7 +46,6 @@ div.inline-diff-delete>div.inline-diff-new {
 div.inline-diff-new {
     width: 50px;
     text-align: center;
-    color: #484848;
     border-right: 1px solid #888888;
 }
 
@@ -80,4 +78,25 @@ div.inline-diff-text {
     height: 20px;
     background-color: #dedede;
     border-right: 1px solid #888888;
+}
+
+.line-selector {
+    color: #484848;
+
+    &:hover {
+        cursor: pointer;
+        color: mix(white, #484848, 30%);
+    }
+
+    &.selected {
+        border-top: 1px solid red;
+        border-left: 1px solid red;
+        border-bottom: 1px solid red;
+    }
+}
+
+.line-content.selected {
+    border-top: 1px solid red;
+    border-right: 1px solid red;
+    border-bottom: 1px solid red;
 }
