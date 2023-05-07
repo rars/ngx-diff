@@ -19,12 +19,21 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "importHelpers": true,
-    "target": "es2020",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2018", "dom"],
+    "target": "ES2022",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
     "paths": {
-      "ngx-diff": ["dist/ngx-diff/ngx-diff", "dist/ngx-diff"]
-    }
+      "ngx-diff": [
+        "dist/ngx-diff/ngx-diff",
+        "dist/ngx-diff"
+      ]
+    },
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

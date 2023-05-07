@@ -82,6 +82,7 @@ It is recommended to use these settings rather than attempt to override styles b
 | 13              | 1.0.0            |
 | 14              | 2.0.0            |
 | 14              | 3.0.0            |
+| 15              | 4.0.0            |
 
 ## Contributions welcome!
 
