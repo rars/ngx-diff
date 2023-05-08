@@ -10,10 +10,12 @@ Angular component library for displaying diffs of text. [Demo](https://rars.gith
    ```
    npm install ngx-diff diff-match-patch-ts --save
    ```
-2. Import `NgxDiffModule` to your app:
+2. Either:
+
+   2.1. If you are using this component in an NgModule-based setting, add `InlineDiffComponent` to your module's `imports`:
 
    ```typescript
-   import { NgxDiffModule } from 'ngx-diff';
+   import { InlineDiffComponent } from 'ngx-diff';
 
    import { NgModule } from '@angular/core';
    import { BrowserModule } from '@angular/platform-browser';
@@ -22,16 +24,35 @@ Angular component library for displaying diffs of text. [Demo](https://rars.gith
 
    @NgModule({
      declarations: [AppComponent],
-     imports: [BrowserModule, NgxDiffModule],
+     imports: [BrowserModule, InlineDiffComponent],
      providers: [],
      bootstrap: [AppComponent],
    })
    export class AppModule {}
    ```
 
+   2.2. Or if you are using this component in a standalone component setting, add `InlineDiffComponent` to your component's `imports`:
+
+   ```typescript
+   import { InlineDiffComponent } from 'ngx-diff';
+
+   import { Component } from '@angular/core';
+
+   @Component({
+     selector: 'app-root',
+     templateUrl: './app.component.html',
+     styleUrls: ['./app.component.scss'],
+     standalone: true,
+     imports: [InlineDiffComponent],
+   })
+   export class AppComponent {
+     // ...
+   }
+   ```
+
 3. Use the `inline-diff` component by setting the `oldText` and `newText` attributes:
    ```HTML
-   <inline-diff [oldText]="oldDocumentContents" [newText]="newDocumentContents" [lineContextSize]="4"></inline-diff>
+   <inline-diff [oldText]="oldDocumentContents" [newText]="newDocumentContents" [lineContextSize]="4" />
    ```
 
 ## Theming
@@ -67,7 +88,7 @@ Then use this class in your desired component in your HTML template:
     [newText]="newText"
     [lineContextSize]="4"
     style="width: 100%"
-    (selectedLineChange)="selectedLineChange($event)"></inline-diff>
+    (selectedLineChange)="selectedLineChange($event)" />
 ```
 
 It is recommended to use these settings rather than attempt to override styles based upon DOM structure or class names that are internal details that may change.
@@ -83,6 +104,7 @@ It is recommended to use these settings rather than attempt to override styles b
 | 14              | 2.0.0            |
 | 14              | 3.0.0            |
 | 15              | 4.0.0            |
+| 16              | 5.0.0            |
 
 ## Contributions welcome!
 

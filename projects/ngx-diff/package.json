@@ -1,9 +1,9 @@
 {
   "name": "ngx-diff",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "peerDependencies": {
-    "@angular/common": ">=15.0.0",
-    "@angular/core": ">=15.0.0",
+    "@angular/common": ">=16.0.0",
+    "@angular/core": ">=16.0.0",
     "diff-match-patch-ts": ">=0.2.0"
   },
   "dependencies": {
