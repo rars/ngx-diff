@@ -25,9 +25,9 @@ describe('InlineDiffComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [InlineDiffComponent, LineNumberPipe],
-      providers: [{ provide: DiffMatchPatchService, useClass: DiffMatchPatchServiceMock }],
-    }).compileComponents();
+    imports: [InlineDiffComponent, LineNumberPipe],
+    providers: [{ provide: DiffMatchPatchService, useClass: DiffMatchPatchServiceMock }],
+}).compileComponents();
 
     fixture = TestBed.createComponent(InlineDiffComponent);
     component = fixture.componentInstance;
