@@ -4,7 +4,7 @@
   "peerDependencies": {
     "@angular/common": ">=16.0.0",
     "@angular/core": ">=16.0.0",
-    "diff-match-patch-ts": ">=0.2.0"
+    "diff-match-patch-ts": ">=0.3.0"
   },
   "dependencies": {
     "tslib": "^2.0.0"
