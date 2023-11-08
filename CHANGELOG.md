@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.0.0](https://github.com/rars/ngx-diff/compare/v5.0.0...v6.0.0) (2023-11-08)
+
+
+### Features
+
+* **ngx-diff:** update to Angular 17 ([0080aad](https://github.com/rars/ngx-diff/commit/0080aad4c391443ed368c07f508e51c7bc740576))
+
 ## [5.0.0](https://github.com/rars/ngx-diff/compare/v4.0.0...v5.0.0) (2023-05-07)
 
 ### Features
