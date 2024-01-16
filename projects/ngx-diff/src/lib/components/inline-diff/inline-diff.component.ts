@@ -12,16 +12,12 @@ import { NgIf, NgFor, NgClass } from '@angular/common';
 type LineDiff = [LineDiffType, number | null, number | null, string, string];
 
 @Component({
-    selector: 'inline-diff',
-    templateUrl: './inline-diff.component.html',
-    styleUrls: ['./inline-diff.component.scss'],
-    standalone: true,
-    imports: [
-        NgIf,
-        NgFor,
-        NgClass,
-        LineNumberPipe,
-    ],
+  // eslint-disable-next-line @angular-eslint/component-selector
+  selector: 'inline-diff',
+  templateUrl: './inline-diff.component.html',
+  styleUrls: ['./inline-diff.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgFor, NgClass, LineNumberPipe],
 })
 export class InlineDiffComponent implements OnInit, OnChanges {
   @Input()
