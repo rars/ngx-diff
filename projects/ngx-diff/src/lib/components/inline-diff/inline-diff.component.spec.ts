@@ -8,7 +8,7 @@ import { DiffMatchPatchService } from '../../services/diff-match-patch/diff-matc
 import { InlineDiffComponent } from './inline-diff.component';
 
 class DiffMatchPatchServiceMock {
-  // eslint-disable-next-line @typescript-eslint/naming-convention, no-underscore-dangle, id-blacklist, id-match
+  // eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-unused-vars, no-underscore-dangle, id-blacklist, id-match
   public computeLineDiff(_oldText: string, _newText: string): Diff[] {
     return [
       [DiffOp.Equal, 'Diff One A\r\nDiff One B\r\n'],
@@ -25,9 +25,9 @@ describe('InlineDiffComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [InlineDiffComponent, LineNumberPipe],
-    providers: [{ provide: DiffMatchPatchService, useClass: DiffMatchPatchServiceMock }],
-}).compileComponents();
+      imports: [InlineDiffComponent, LineNumberPipe],
+      providers: [{ provide: DiffMatchPatchService, useClass: DiffMatchPatchServiceMock }],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(InlineDiffComponent);
     component = fixture.componentInstance;
