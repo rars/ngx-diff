@@ -113,4 +113,4 @@ If you have a feature or improvement you would like to see included, please rais
 
 ## License
 
-See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
+See the [LICENSE](LICENSE) file for license rights and limitations (MIT).
