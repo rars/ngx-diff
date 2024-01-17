@@ -4,10 +4,9 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [6.0.0](https://github.com/rars/ngx-diff/compare/v5.0.0...v6.0.0) (2023-11-08)
 
-
 ### Features
 
-* **ngx-diff:** update to Angular 17 ([0080aad](https://github.com/rars/ngx-diff/commit/0080aad4c391443ed368c07f508e51c7bc740576))
+- **ngx-diff:** update to Angular 17 ([0080aad](https://github.com/rars/ngx-diff/commit/0080aad4c391443ed368c07f508e51c7bc740576))
 
 ## [5.0.0](https://github.com/rars/ngx-diff/compare/v4.0.0...v5.0.0) (2023-05-07)
 
@@ -52,7 +51,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 <a name="0.1.0"></a>
 
-# 0.1.0 (2018-01-01)
+## 0.1.0 (2018-01-01)
 
 ### Features
 
