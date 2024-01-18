@@ -1,6 +1,6 @@
 {
   "name": "ngx-diff",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "peerDependencies": {
     "@angular/common": ">=17.0.0",
     "@angular/core": ">=17.0.0",
@@ -14,9 +14,8 @@
     "url": "https://github.com/rars/ngx-diff"
   },
   "keywords": [
-    "Angular2",
     "Angular",
-    "ng2",
+    "ng",
     "diff"
   ],
   "author": "Richard Russell",
