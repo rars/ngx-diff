@@ -10,8 +10,37 @@ import { Component } from '@angular/core';
   imports: [InlineDiffComponent],
 })
 export class AppComponent {
-  public oldText = 'apples\noranges\nkiwis\ncarrots\n';
-  public newText = 'apples\npears\nkiwis\ngrapefruit\ncarrots\n';
+  public oldText = `apples
+oranges
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+kiwis
+carrots
+`;
+  public newText = `apples
+pears
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+kiwis
+grapefruit
+carrots
+`;
 
   public selectedLineChange(event: unknown): void {
     console.log(event);
