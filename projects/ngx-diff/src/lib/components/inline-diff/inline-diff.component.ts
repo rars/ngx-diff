@@ -7,7 +7,7 @@ import { LineDiffType } from '../../common/line-diff-type';
 import { LineSelectEvent } from '../../common/line-select-event';
 import { DiffMatchPatchService } from '../../services/diff-match-patch/diff-match-patch.service';
 import { LineNumberPipe } from '../../pipes/line-number/line-number.pipe';
-import { NgIf, NgFor, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 
 type LineDiff = [LineDiffType, number | null, number | null, string, string];
 
@@ -17,7 +17,7 @@ type LineDiff = [LineDiffType, number | null, number | null, string, string];
   templateUrl: './inline-diff.component.html',
   styleUrls: ['./inline-diff.component.scss'],
   standalone: true,
-  imports: [NgIf, NgFor, NgClass, LineNumberPipe],
+  imports: [NgClass, LineNumberPipe],
 })
 export class InlineDiffComponent implements OnInit, OnChanges {
   @Input()
