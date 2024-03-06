@@ -134,7 +134,7 @@ export class InlineDiffComponent implements OnInit, OnChanges {
     const cssClass = this.getCssClass(LineDiffType.Equal);
     const linesToInsert: LineDiff[] = [];
 
-    for (let line of lines) {
+    for (const line of lines) {
       linesToInsert.push({
         type: LineDiffType.Equal,
         lineNumberInOldText,
