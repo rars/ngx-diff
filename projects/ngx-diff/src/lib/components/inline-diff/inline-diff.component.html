@@ -1,7 +1,5 @@
 @if (isContentEqual) {
-  <div class="inline-diff-no-changes-text">
-    There are no changes to display.
-  </div>
+  <div class="inline-diff-no-changes-text">There are no changes to display.</div>
 }
 @if (!isContentEqual) {
   <div class="inline-diff">
@@ -9,27 +7,27 @@
       @for (lineDiff of calculatedDiff; track lineDiff; let idx = $index) {
         <div
           class="line-selector"
-          [ngClass]="lineDiff === selectedLine ? [lineDiff[4], 'selected'] : [lineDiff[4]]"
+          [ngClass]="
+            lineDiff === selectedLine ? [lineDiff.cssClass, 'selected'] : [lineDiff.cssClass]
+          "
           (click)="selectLine(idx, lineDiff)"
-          >
-          <div class="inline-diff-old">{{ lineDiff[1] | lineNumber }}</div>
-          <!-- No space
-          -->
-          <div class="inline-diff-new">{{ lineDiff[2] | lineNumber }}</div>
+        >
+          <div class="inline-diff-old">{{ lineDiff.lineNumberInOldText | lineNumber }}</div>
+          <div class="inline-diff-new">{{ lineDiff.lineNumberInNewText | lineNumber }}</div>
         </div>
       }
       <div class="dmp-margin-bottom-spacer"></div>
     </div>
-    <!-- No space
-    -->
     <div class="inline-diff-content">
       <div class="inline-diff-content-wrapper">
         @for (lineDiff of calculatedDiff; track lineDiff) {
           <div
             class="line-content"
-            [ngClass]="lineDiff === selectedLine ? [lineDiff[4], 'selected'] : [lineDiff[4]]"
-            >
-            <div class="inline-diff-text">{{ lineDiff[3] }}</div>
+            [ngClass]="
+              lineDiff === selectedLine ? [lineDiff.cssClass, 'selected'] : [lineDiff.cssClass]
+            "
+          >
+            <div class="inline-diff-text">{{ lineDiff.line }}</div>
           </div>
         }
         <div class="dmp-margin-bottom-spacer line-content"></div>
