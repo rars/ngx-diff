@@ -10,8 +10,42 @@ import { Component } from '@angular/core';
   imports: [InlineDiffComponent],
 })
 export class AppComponent {
-  public oldText = `apples
+  public oldText = `common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+apples
 oranges
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
 common text
 common text
 common text
@@ -25,8 +59,41 @@ common text
 kiwis
 carrots
 `;
-  public newText = `apples
+  public newText = `common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+apples
 pears
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
+common text
 common text
 common text
 common text

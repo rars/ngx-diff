@@ -11,6 +11,11 @@ export interface IDiffCalculation {
     lineNumberInOldText: number | null;
     lineNumberInNewText: number | null;
     line: string;
+    args?: {
+      skippedLines?: string[];
+      lineInOldText?: number | null;
+      lineInNewText?: number | null;
+    };
   }>;
   lineInOldText: number;
   lineInNewText: number;

@@ -14,6 +14,7 @@ type LineDiff = {
   lineNumberInOldText: number | null;
   lineNumberInNewText: number | null;
   line: string;
+  args?: { skippedLines?: string[]; lineInOldText?: number | null; lineInNewText?: number | null };
   cssClass: string;
 };
 
@@ -58,6 +59,11 @@ export class InlineDiffComponent implements OnInit, OnChanges {
   public selectLine(index: number, lineDiff: LineDiff): void {
     this.selectedLine = lineDiff;
     const { type, lineNumberInOldText, lineNumberInNewText, line } = lineDiff;
+
+    if (type === LineDiffType.Placeholder) {
+      this.expandPlaceholder(index, lineDiff);
+    }
+
     this.selectedLineChange.emit({
       index,
       type,
@@ -65,6 +71,82 @@ export class InlineDiffComponent implements OnInit, OnChanges {
       lineNumberInNewText,
       line,
     });
+  }
+
+  private expandPlaceholder(index: number, placeholder: LineDiff): void {
+    const replacementLines = this.getPlaceholderReplacementLines(placeholder);
+    this.calculatedDiff.splice(index, 1, ...replacementLines);
+  }
+
+  private getPlaceholderReplacementLines(placeholder: LineDiff): LineDiff[] {
+    const skippedLines = placeholder.args?.skippedLines ?? [];
+    const lineInOldText = placeholder.args?.lineInOldText ?? 0;
+    const lineInNewText = placeholder.args?.lineInNewText ?? 0;
+
+    if (this.lineContextSize && skippedLines.length > 2 * this.lineContextSize) {
+      const prefix = skippedLines.slice(0, this.lineContextSize);
+      const remainingSkippedLines = skippedLines.slice(
+        this.lineContextSize,
+        skippedLines.length - this.lineContextSize,
+      );
+      const suffix = skippedLines.slice(
+        skippedLines.length - this.lineContextSize,
+        skippedLines.length,
+      );
+
+      const prefixLines = this.createLineDiffs(prefix, lineInOldText, lineInNewText);
+
+      const newPlaceholder: LineDiff = {
+        type: LineDiffType.Placeholder,
+        lineNumberInOldText: null,
+        lineNumberInNewText: null,
+        line: '...',
+        args: {
+          skippedLines: remainingSkippedLines,
+          lineInOldText: lineInOldText + prefix.length,
+          lineInNewText: lineInNewText + prefix.length,
+        },
+        cssClass: this.getCssClass(LineDiffType.Placeholder),
+      };
+
+      const numberOfPrefixAndSkippedLines = prefix.length + remainingSkippedLines.length;
+
+      const suffixLines = this.createLineDiffs(
+        suffix,
+        lineInOldText + numberOfPrefixAndSkippedLines,
+        lineInNewText + numberOfPrefixAndSkippedLines,
+      );
+
+      return [...prefixLines, newPlaceholder, ...suffixLines];
+    }
+
+    return this.createLineDiffs(skippedLines, lineInOldText, lineInNewText);
+  }
+
+  private createLineDiffs(
+    lines: string[],
+    startLineInOldText: number,
+    startLineInNewText: number,
+  ): LineDiff[] {
+    let lineNumberInOldText = startLineInOldText;
+    let lineNumberInNewText = startLineInNewText;
+
+    const cssClass = this.getCssClass(LineDiffType.Equal);
+    const linesToInsert: LineDiff[] = [];
+
+    for (let line of lines) {
+      linesToInsert.push({
+        type: LineDiffType.Equal,
+        lineNumberInOldText,
+        lineNumberInNewText,
+        line: line,
+        cssClass,
+      });
+      lineNumberInOldText++;
+      lineNumberInNewText++;
+    }
+
+    return linesToInsert;
   }
 
   private updateHtml(): void {
@@ -119,12 +201,13 @@ export class InlineDiffComponent implements OnInit, OnChanges {
     }
 
     this.calculatedDiff = diffCalculation.lines.map(
-      ({ type, lineNumberInOldText, lineNumberInNewText, line }) => {
+      ({ type, lineNumberInOldText, lineNumberInNewText, line, args }) => {
         return {
           type,
           lineNumberInOldText,
           lineNumberInNewText,
           line,
+          args,
           cssClass: this.getCssClass(type),
         };
       },
@@ -167,10 +250,18 @@ export class InlineDiffComponent implements OnInit, OnChanges {
 
         // Output a special line indicating that some content is equal and has been skipped
         diffCalculation.lines.push({
-          type: LineDiffType.Equal,
+          type: LineDiffType.Placeholder,
           lineNumberInOldText: null,
           lineNumberInNewText: null,
           line: '...',
+          args: {
+            skippedLines: diffLines.slice(
+              this.lineContextSize,
+              diffLines.length - this.lineContextSize,
+            ),
+            lineInOldText: diffCalculation.lineInOldText,
+            lineInNewText: diffCalculation.lineInNewText,
+          },
         });
         const numberOfSkippedLines = diffLines.length - 2 * this.lineContextSize;
         diffCalculation.lineInOldText += numberOfSkippedLines;
@@ -228,6 +319,7 @@ export class InlineDiffComponent implements OnInit, OnChanges {
 
   private getCssClass(type: LineDiffType): string {
     switch (type) {
+      case LineDiffType.Placeholder:
       case LineDiffType.Equal:
         return 'inline-diff-equal';
       case LineDiffType.Insert:
