@@ -6,7 +6,17 @@ import { LineDiffType } from './line-diff-type';
  *  > lineInNewText keeps track of the document line number in the [newText] input.
  */
 export interface IDiffCalculation {
-  lines: Array<[LineDiffType, number | null, number | null, string]>;
+  lines: Array<{
+    type: LineDiffType;
+    lineNumberInOldText: number | null;
+    lineNumberInNewText: number | null;
+    line: string;
+    args?: {
+      skippedLines?: string[];
+      lineInOldText?: number | null;
+      lineInNewText?: number | null;
+    };
+  }>;
   lineInOldText: number;
   lineInNewText: number;
 }

@@ -43,15 +43,15 @@ describe('InlineDiffComponent', () => {
   });
 
   it('should have correct line numbers', () => {
-    const leftLineNumbers = component.calculatedDiff.map((x) => x[1]);
+    const leftLineNumbers = component.calculatedDiff.map((x) => x.lineNumberInOldText);
     expect(leftLineNumbers).toEqual([1, 2, null, null, 3, 4, 5, 6]);
 
-    const rightLineNumbers = component.calculatedDiff.map((x) => x[2]);
+    const rightLineNumbers = component.calculatedDiff.map((x) => x.lineNumberInNewText);
     expect(rightLineNumbers).toEqual([1, 2, 3, 4, null, null, 5, 6]);
   });
 
   it('should have correct class annotations', () => {
-    const classes = component.calculatedDiff.map((x) => x[0]);
+    const classes = component.calculatedDiff.map((x) => x.type);
     expect(classes).toEqual([
       LineDiffType.Equal,
       LineDiffType.Equal,
@@ -65,7 +65,7 @@ describe('InlineDiffComponent', () => {
   });
 
   it('should have correct line contents', () => {
-    const contents = component.calculatedDiff.map((x) => x[3]);
+    const contents = component.calculatedDiff.map((x) => x.line);
     expect(contents).toEqual([
       'Diff One A',
       'Diff One B',
