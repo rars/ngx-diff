@@ -1,4 +1,4 @@
-import { Diff, DiffMatchPatch } from 'diff-match-patch-ts';
+import { type Diff, DiffMatchPatch } from 'diff-match-patch-ts';
 
 import { Injectable } from '@angular/core';
 
