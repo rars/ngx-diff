@@ -1,6 +1,6 @@
 {
   "name": "ngx-diff",
-  "version": "7.0.0-alpha.1",
+  "version": "7.0.0",
   "type": "module",
   "scripts": {
     "ng": "ng",
@@ -23,7 +23,7 @@
     "@angular/router": "^17.0.0",
     "@commitlint/cli": "^18.4.4",
     "@commitlint/config-conventional": "^18.4.4",
-    "diff-match-patch-ts": "^0.4.0-rc.1",
+    "diff-match-patch-ts": "^0.4.0",
     "rxjs": "~7.8.1",
     "standard-version": "^9.3.2",
     "tslib": "^2.3.1",

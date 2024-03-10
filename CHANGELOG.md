@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [7.0.0](https://github.com/rars/ngx-diff/compare/v6.0.1...v7.0.0) (2024-03-10)
+
+### Features
+
+- **ngx-diff:** allow truncated placeholder lines to be expanded to reveal hidden content ([481066c](https://github.com/rars/ngx-diff/commit/481066c3828cf32b9900db3994fd3db9e6887302))
+
 ## [6.0.1](https://github.com/rars/ngx-diff/compare/v6.0.0...v6.0.1) (2024-01-18)
 
 ### Bug Fixes
