@@ -1,0 +1,181 @@
+:host {
+    --ngx-diff-border-color: #888888;
+    --ngx-diff-font-size: 0.9rem;
+    --ngx-diff-font-family: Consolas, Courier, monospace;
+    --ngx-diff-font-color: #000000;
+    --ngx-diff-line-number-font-color: #484848;
+    --ngx-diff-line-number-hover-font-color: #ffffff;
+    --ngx-diff-selected-border-color: #ff8000;
+
+    --ngx-diff-line-number-width: 2rem;
+    --ngx-diff-border-width: 1px;
+    --ngx-diff-line-left-padding: 1rem;
+    --ngx-diff-bottom-spacer-height: 1rem;
+    --ngx-diff-title-bar-padding: 0.5rem;
+    --ngx-diff-title-font-weight: 600;
+
+    --ngx-diff-insert-color: #d6ffd6;
+    --ngx-diff-delete-color: #ffd6d6;
+    --ngx-diff-equal-color: #ffffff;
+    --ngx-diff-mix-color: #000;
+    --ngx-diff-light-mix-percentage: 4%;
+    --ngx-diff-heavy-mix-percentage: 10%;
+
+    --ngx-diff-inserted-background-color: var(--ngx-diff-insert-color);
+    --ngx-diff-deleted-background-color: var(--ngx-diff-delete-color);
+    --ngx-diff-equal-background-color: var(--ngx-diff-equal-color);
+    --ngx-diff-margin-background-color: color-mix(in srgb, var(--ngx-diff-equal-color), var(--ngx-diff-mix-color) var(--ngx-diff-light-mix-percentage));
+
+    --ngx-diff-insert-color-darker: color-mix(in srgb, var(--ngx-diff-insert-color), var(--ngx-diff-mix-color) var(--ngx-diff-light-mix-percentage));
+    --ngx-diff-insert-color-darkest: color-mix(in srgb, var(--ngx-diff-insert-color), var(--ngx-diff-mix-color) var(--ngx-diff-heavy-mix-percentage));
+
+    --ngx-diff-delete-color-darker: color-mix(in srgb, var(--ngx-diff-delete-color), var(--ngx-diff-mix-color) var(--ngx-diff-light-mix-percentage));
+    --ngx-diff-delete-color-darkest: color-mix(in srgb, var(--ngx-diff-delete-color), var(--ngx-diff-mix-color) var(--ngx-diff-heavy-mix-percentage));
+  }
+
+  div.sbs-diff-title-bar {
+    background-color: var(--ngx-diff-margin-background-color);
+    font-family: var(--ngx-diff-font-family);
+    font-size: var(--ngx-diff-font-size);
+    font-weight: var(--ngx-diff-title-font-weight);
+    padding: var(--ngx-diff-title-bar-padding);
+  }
+
+  div.sbs-diff-no-changes-text {
+    font-family: var(--ngx-diff-font-family);
+    font-size: var(--ngx-diff-font-size);
+    font-weight: var(--ngx-diff-title-font-weight);
+    padding: var(--ngx-diff-title-bar-padding);
+    background-color: var(--ngx-diff-equal-background-color);
+    color: var(--ngx-diff-font-color);
+  }
+
+  .sbs-diff-summary-lines-added {
+   color: var(--ngx-diff-insert-color-darkest);
+  }
+
+  .sbs-diff-summary-lines-removed {
+    color: var(--ngx-diff-delete-color-darkest);
+  }
+
+  div.sbs-diff {
+    display: flex;
+    flex-direction: row;
+    border: var(--ngx-diff-border-width) solid var(--ngx-diff-border-color);
+    font-family: var(--ngx-diff-font-family);
+
+    div.sbs-diff-margin:last-of-type {
+      border-left: var(--ngx-diff-border-width) solid var(--ngx-diff-border-color);
+    }
+  }
+
+  div.sbs-diff-content {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    flex-grow: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  div.sbs-diff-content-wrapper {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  div.sbs-diff-old {
+    width: var(--ngx-diff-line-number-width);
+    text-align: center;
+    font-size: var(--ngx-diff-font-size);
+  }
+
+  div.sbs-diff-new {
+    width: var(--ngx-diff-line-number-width);
+    text-align: center;
+    border-right: var(--ngx-diff-border-width) solid var(--border-color);
+    font-size: var(--ngx-diff-font-size);
+  }
+
+  div.sbs-diff-text {
+    white-space: pre;
+    padding-left: var(--ngx-diff-line-left-padding);
+    font-size: var(--ngx-diff-font-size);
+    color: var(--ngx-diff-font-color);
+  }
+
+  .sbs-diff-equal {
+    background-color: var(--ngx-diff-margin-background-color);
+
+    &.line-content {
+      background-color: var(--ngx-diff-equal-background-color);
+    }
+  }
+
+  .sbs-diff-delete {
+    background-color: var(--ngx-diff-delete-color-darker);
+
+    &.line-content {
+      background-color: var(--ngx-diff-deleted-background-color);
+    }
+  }
+
+  .sbs-diff-insert {
+    background-color: var(--ngx-diff-insert-color-darker);
+
+    &.line-content {
+      background-color: var(--ngx-diff-inserted-background-color);
+    }
+  }
+
+  .sbs-diff-delete > div {
+    display: inline-block;
+  }
+
+  .sbs-diff-insert > div {
+    display: inline-block;
+  }
+
+  .sbs-diff-equal > div {
+    display: inline-block;
+  }
+
+  .dmp-margin-bottom-spacer {
+    height: var(--ngx-diff-bottom-spacer-height);
+    background-color: var(--ngx-diff-margin-background-color);
+    border-right: var(--ngx-diff-border-width) solid var(--border-color);
+
+    &.line-content {
+      background-color: var(--ngx-diff-equal-background-color);
+    }
+  }
+
+  .line-selector {
+    color: var(--ngx-diff-line-number-font-color);
+
+    .sbs-diff-before, .sbs-diff-after {
+      width: var(--ngx-diff-line-number-width);
+      text-align: center;
+    }
+
+    &:hover {
+      cursor: pointer;
+      color: var(--ngx-diff-line-number-hover-font-color);
+    }
+
+    &.selected {
+      border-top: var(--ngx-diff-border-width) solid var(--ngx-diff-selected-border-color);
+      border-left: var(--ngx-diff-border-width) solid var(--ngx-diff-selected-border-color);
+      border-bottom: var(--ngx-diff-border-width) solid var(--ngx-diff-selected-border-color);
+    }
+  }
+
+  .line-content.selected {
+    border-top: var(--ngx-diff-border-width) solid var(--ngx-diff-selected-border-color);
+    border-right: var(--ngx-diff-border-width) solid var(--ngx-diff-selected-border-color);
+    border-bottom: var(--ngx-diff-border-width) solid var(--ngx-diff-selected-border-color);
+  }
