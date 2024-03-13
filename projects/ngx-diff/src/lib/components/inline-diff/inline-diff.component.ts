@@ -27,26 +27,34 @@ type LineDiff = {
   imports: [NgClass, LineNumberPipe],
 })
 export class InlineDiffComponent implements OnInit, OnChanges {
-  @Input()
+  /**
+   * Optional title to be displayed at the top of the diff.
+   */
+  @Input({ required: false })
+  public title?: string;
+  @Input({ required: true })
   public oldText: string | number | boolean | undefined;
-  @Input()
+  @Input({ required: true })
   public newText: string | number | boolean | undefined;
-  // The number of lines of context to provide either side of a DiffOp.Insert or DiffOp.Delete diff.
-  // Context is taken from a DiffOp.Equal section.
-  @Input()
-  public lineContextSize: number | undefined;
+  /**
+   * The number of lines of context to provide either side of a DiffOp.Insert or DiffOp.Delete diff.
+   * Context is taken from a DiffOp.Equal section.
+   */
+  @Input({ required: false })
+  public lineContextSize?: number;
 
   @Output()
   public selectedLineChange = new EventEmitter<LineSelectEvent>();
 
-  public calculatedDiff: LineDiff[];
+  public diffSummary = {
+    numLinesAdded: 0,
+    numLinesRemoved: 0,
+  };
+  public calculatedDiff: LineDiff[] = [];
   public selectedLine?: LineDiff;
-  public isContentEqual: boolean;
+  public isContentEqual: boolean = false;
 
-  public constructor(private readonly dmp: DiffMatchPatchService) {
-    this.calculatedDiff = [];
-    this.isContentEqual = false;
-  }
+  public constructor(private readonly dmp: DiffMatchPatchService) {}
 
   public ngOnInit(): void {
     this.updateHtml();
@@ -169,6 +177,10 @@ export class InlineDiffComponent implements OnInit, OnChanges {
     this.isContentEqual = diffs.length === 1 && diffs[0][0] === DiffOp.Equal;
     if (this.isContentEqual) {
       this.calculatedDiff = [];
+      this.diffSummary = {
+        numLinesAdded: 0,
+        numLinesRemoved: 0,
+      };
       return;
     }
 
@@ -212,6 +224,11 @@ export class InlineDiffComponent implements OnInit, OnChanges {
         };
       },
     );
+
+    this.diffSummary = {
+      numLinesAdded: this.calculatedDiff.filter((x) => x.type === LineDiffType.Insert).length,
+      numLinesRemoved: this.calculatedDiff.filter((x) => x.type === LineDiffType.Delete).length,
+    };
   }
 
   /* If the number of diffLines is greater than lineContextSize then we may need to adjust the diff

@@ -1,3 +1,12 @@
+<div class="inline-diff-title-bar">
+  @if (title) {
+    <span>{{ title }}</span
+    >&nbsp;
+  }
+  <span class="inline-diff-summary-lines-added">+++ {{ diffSummary.numLinesAdded }}</span
+  >&nbsp;
+  <span class="inline-diff-summary-lines-removed">--- {{ diffSummary.numLinesRemoved }}</span>
+</div>
 @if (isContentEqual) {
   <div class="inline-diff-no-changes-text">There are no changes to display.</div>
 }

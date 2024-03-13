@@ -7,10 +7,11 @@
     style="width: 100%"
     (selectedLineChange)="selectedLineChange($event)"
   />
-
+  <br />
   <div class="dark-theme">
     <inline-diff
       class="my-inline-diff-theme"
+      title="github/user/src/main.ts"
       [oldText]="oldText"
       [newText]="newText"
       [lineContextSize]="4"
@@ -18,4 +19,21 @@
       (selectedLineChange)="selectedLineChange($event)"
     />
   </div>
+  <br />
+  <inline-diff
+    [oldText]="oldText"
+    [newText]="oldText"
+    [lineContextSize]="4"
+    style="width: 100%"
+    (selectedLineChange)="selectedLineChange($event)"
+  />
+  <br />
+  <inline-diff
+    title="github/user/src/main.ts"
+    [oldText]="oldText"
+    [newText]="newText"
+    [lineContextSize]="4"
+    style="width: 100%"
+    (selectedLineChange)="selectedLineChange($event)"
+  />
 </div>
