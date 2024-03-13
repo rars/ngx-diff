@@ -65,17 +65,22 @@ For version 3+, you can customise the appearance of the diff through various CSS
   --ngx-diff-font-size: 1rem;
   --ngx-diff-font-family: Consolas, Courier, monospace;
   --ngx-diff-font-color: #000000;
+  --ngx-diff-title-bar-padding: 0.5rem;
+  --ngx-diff-title-font-weight: 600;
   --ngx-diff-line-number-font-color: #484848;
   --ngx-diff-line-number-hover-font-color: #ffffff;
   --ngx-diff-selected-border-color: #ff8000;
-  --ngx-diff-inserted-background-color: #9dff97;
-  --ngx-diff-deleted-background-color: #ff8c8c;
-  --ngx-diff-equal-background-color: #ffffff;
-  --ngx-diff-margin-background-color: #dedede;
   --ngx-diff-line-number-width: 2rem;
   --ngx-diff-border-width: 1px;
   --ngx-diff-line-left-padding: 1rem;
   --ngx-diff-bottom-spacer-height: 1rem;
+
+  --ngx-diff-insert-color: #d6ffd6;
+  --ngx-diff-delete-color: #ffd6d6;
+  --ngx-diff-equal-color: #ffffff;
+  --ngx-diff-mix-color: #000;
+  --ngx-diff-light-mix-percentage: 2%;
+  --ngx-diff-heavy-mix-percentage: 10%;
 }
 ```
 
