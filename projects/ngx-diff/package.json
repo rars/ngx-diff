@@ -1,6 +1,6 @@
 {
   "name": "ngx-diff",
-  "version": "7.0.0",
+  "version": "8.0.0-alpha.0",
   "peerDependencies": {
     "@angular/common": ">=17.0.0",
     "@angular/core": ">=17.0.0",
