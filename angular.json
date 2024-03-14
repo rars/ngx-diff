@@ -103,7 +103,7 @@
       "projectType": "library",
       "root": "projects/ngx-diff",
       "sourceRoot": "projects/ngx-diff/src",
-      "prefix": "lib",
+      "prefix": "ngx",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",

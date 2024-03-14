@@ -1,0 +1,76 @@
+<div class="sbs-diff-title-bar">
+  @if (title) {
+    <span>{{ title }}</span
+    >&nbsp;
+  }
+  <span class="sbs-diff-summary-lines-added">+++ {{ diffSummary.numLinesAdded }}</span
+  >&nbsp;
+  <span class="sbs-diff-summary-lines-removed">--- {{ diffSummary.numLinesRemoved }}</span>
+</div>
+@if (isContentEqual) {
+  <div class="sbs-diff-no-changes-text">There are no changes to display.</div>
+}
+@if (!isContentEqual) {
+  <div class="sbs-diff">
+    <!-- before -->
+    <div class="sbs-diff-margin">
+      @for (lineDiff of beforeLines; track lineDiff; let idx = $index) {
+        <div
+          class="line-selector"
+          [ngClass]="
+            idx === selectedLineIndex ? [lineDiff.cssClass, 'selected'] : [lineDiff.cssClass]
+          "
+          (click)="selectLine(idx)"
+        >
+          <div class="sbs-diff-before">{{ lineDiff.lineNumber | lineNumber }}</div>
+        </div>
+      }
+      <div class="dmp-margin-bottom-spacer"></div>
+    </div>
+    <div class="sbs-diff-content">
+      <div class="sbs-diff-content-wrapper">
+        @for (lineDiff of beforeLines; track lineDiff; let idx = $index) {
+          <div
+            class="line-content"
+            [ngClass]="
+              idx === selectedLineIndex ? [lineDiff.cssClass, 'selected'] : [lineDiff.cssClass]
+            "
+          >
+            <div class="sbs-diff-text">{{ lineDiff.line }}</div>
+          </div>
+        }
+        <div class="dmp-margin-bottom-spacer line-content"></div>
+      </div>
+    </div>
+    <!-- after -->
+    <div class="sbs-diff-margin">
+      @for (lineDiff of afterLines; track lineDiff; let idx = $index) {
+        <div
+          class="line-selector"
+          [ngClass]="
+            idx === selectedLineIndex ? [lineDiff.cssClass, 'selected'] : [lineDiff.cssClass]
+          "
+          (click)="selectLine(idx)"
+        >
+          <div class="sbs-diff-after">{{ lineDiff.lineNumber | lineNumber }}</div>
+        </div>
+      }
+      <div class="dmp-margin-bottom-spacer"></div>
+    </div>
+    <div class="sbs-diff-content">
+      <div class="sbs-diff-content-wrapper">
+        @for (lineDiff of afterLines; track lineDiff; let idx = $index) {
+          <div
+            class="line-content"
+            [ngClass]="
+              idx === selectedLineIndex ? [lineDiff.cssClass, 'selected'] : [lineDiff.cssClass]
+            "
+          >
+            <div class="sbs-diff-text">{{ lineDiff.line }}</div>
+          </div>
+        }
+        <div class="dmp-margin-bottom-spacer line-content"></div>
+      </div>
+    </div>
+  </div>
+}

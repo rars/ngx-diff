@@ -1,4 +1,4 @@
-import { InlineDiffComponent } from 'ngx-diff';
+import { InlineDiffComponent, SideBySideDiffComponent } from 'ngx-diff';
 
 import { Component } from '@angular/core';
 
@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   standalone: true,
-  imports: [InlineDiffComponent],
+  imports: [InlineDiffComponent, SideBySideDiffComponent],
 })
 export class AppComponent {
   public oldText = `common text

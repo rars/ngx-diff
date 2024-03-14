@@ -36,4 +36,13 @@
     style="width: 100%"
     (selectedLineChange)="selectedLineChange($event)"
   />
+  <br />
+  <ngx-side-by-side-diff
+    title="github/user/src/main.ts"
+    [before]="oldText"
+    [after]="newText"
+    [lineContextSize]="4"
+    style="width: 100%"
+    (selectedLineChange)="selectedLineChange($event)"
+  />
 </div>

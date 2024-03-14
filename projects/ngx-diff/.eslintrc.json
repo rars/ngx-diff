@@ -1,18 +1,11 @@
 {
   "extends": "../../.eslintrc.json",
-  "ignorePatterns": [
-    "!**/*"
-  ],
+  "ignorePatterns": ["!**/*"],
   "overrides": [
     {
-      "files": [
-        "*.ts"
-      ],
+      "files": ["*.ts"],
       "parserOptions": {
-        "project": [
-          "projects/ngx-diff/tsconfig.lib.json",
-          "projects/ngx-diff/tsconfig.spec.json"
-        ],
+        "project": ["projects/ngx-diff/tsconfig.lib.json", "projects/ngx-diff/tsconfig.spec.json"],
         "createDefaultProgram": true
       },
       "rules": {
@@ -20,7 +13,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "lib",
+            "prefix": "ngx",
             "style": "kebab-case"
           }
         ],
@@ -28,7 +21,7 @@
           "error",
           {
             "type": "attribute",
-            "prefix": "lib",
+            "prefix": "ngx",
             "style": "camelCase"
           }
         ],
@@ -38,17 +31,12 @@
             "accessibility": "explicit"
           }
         ],
-        "arrow-parens": [
-          "off",
-          "always"
-        ],
+        "arrow-parens": ["off", "always"],
         "import/order": "off"
       }
     },
     {
-      "files": [
-        "*.html"
-      ],
+      "files": ["*.html"],
       "rules": {}
     }
   ]
