@@ -1,4 +1,4 @@
-<div>
+<div class="ngx-diff-light-theme">
   <inline-diff
     class="my-inline-diff-theme"
     [oldText]="oldText"
@@ -8,17 +8,15 @@
     (selectedLineChange)="selectedLineChange($event)"
   />
   <br />
-  <div class="dark-theme">
-    <inline-diff
-      class="my-inline-diff-theme"
-      title="github/user/src/main.ts"
-      [oldText]="oldText"
-      [newText]="newText"
-      [lineContextSize]="4"
-      style="width: 100%"
-      (selectedLineChange)="selectedLineChange($event)"
-    />
-  </div>
+  <inline-diff
+    class="ngx-diff-dark-theme"
+    title="github/user/src/main.ts"
+    [oldText]="oldText"
+    [newText]="newText"
+    [lineContextSize]="4"
+    style="width: 100%"
+    (selectedLineChange)="selectedLineChange($event)"
+  />
   <br />
   <inline-diff
     [oldText]="oldText"
@@ -39,6 +37,16 @@
   <br />
   <ngx-side-by-side-diff
     title="github/user/src/main.ts"
+    [before]="oldText"
+    [after]="newText"
+    [lineContextSize]="4"
+    style="width: 100%"
+    (selectedLineChange)="selectedLineChange($event)"
+  />
+  <br />
+  <ngx-side-by-side-diff
+    title="github/user/src/main.ts"
+    class="ngx-diff-dark-theme"
     [before]="oldText"
     [after]="newText"
     [lineContextSize]="4"

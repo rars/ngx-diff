@@ -1,0 +1,75 @@
+.ngx-diff-light-theme,
+.ngx-diff-dark-theme {
+  --ngx-diff-border-color: #dfdfdf;
+  --ngx-diff-font-size: 0.9rem;
+  --ngx-diff-font-family: Consolas, Courier, monospace;
+  --ngx-diff-font-color: #000;
+  --ngx-diff-line-number-font-color: #aaaaaa;
+  --ngx-diff-line-number-hover-font-color:  #484848;
+
+  --ngx-diff-selected-border-width: 0;
+  --ngx-diff-selected-border-color: #000;
+  --ngx-diff-selected-line-background-color: #d6f1ff;
+
+  --ngx-diff-line-number-width: 2rem;
+  --ngx-diff-border-width: 1px;
+  --ngx-diff-line-left-padding: 1rem;
+  --ngx-diff-bottom-spacer-height: 1rem;
+  --ngx-diff-title-bar-padding: 0.5rem;
+  --ngx-diff-title-font-weight: 600;
+
+  --ngx-diff-insert-color: #d6ffd6;
+  --ngx-diff-delete-color: #ffd6d6;
+  --ngx-diff-equal-color: #ffffff;
+  --ngx-diff-mix-color: #000;
+  --ngx-diff-light-mix-percentage: 4%;
+  --ngx-diff-heavy-mix-percentage: 10%;
+
+  --ngx-diff-inserted-background-color: var(--ngx-diff-insert-color);
+  --ngx-diff-deleted-background-color: var(--ngx-diff-delete-color);
+  --ngx-diff-equal-background-color: var(--ngx-diff-equal-color);
+  --ngx-diff-margin-background-color: color-mix(
+    in srgb,
+    var(--ngx-diff-equal-color),
+    var(--ngx-diff-mix-color) var(--ngx-diff-light-mix-percentage)
+  );
+
+  --ngx-diff-insert-color-darker: color-mix(
+    in srgb,
+    var(--ngx-diff-insert-color),
+    var(--ngx-diff-mix-color) var(--ngx-diff-light-mix-percentage)
+  );
+  --ngx-diff-insert-color-darkest: color-mix(
+    in srgb,
+    var(--ngx-diff-insert-color),
+    var(--ngx-diff-mix-color) var(--ngx-diff-heavy-mix-percentage)
+  );
+
+  --ngx-diff-delete-color-darker: color-mix(
+    in srgb,
+    var(--ngx-diff-delete-color),
+    var(--ngx-diff-mix-color) var(--ngx-diff-light-mix-percentage)
+  );
+  --ngx-diff-delete-color-darkest: color-mix(
+    in srgb,
+    var(--ngx-diff-delete-color),
+    var(--ngx-diff-mix-color) var(--ngx-diff-heavy-mix-percentage)
+  );
+}
+
+.ngx-diff-dark-theme {
+  --ngx-diff-border-color: #474747;
+
+  --ngx-diff-font-color: #ffffff;
+  --ngx-diff-line-number-font-color: #636363;
+  --ngx-diff-line-number-hover-font-color: #ffffff;
+
+  --ngx-diff-selected-line-background-color: #354a54;
+
+  --ngx-diff-insert-color: #355435;
+  --ngx-diff-delete-color: #543535;
+  --ngx-diff-equal-color: #292929;
+  --ngx-diff-mix-color: #fff;
+  --ngx-diff-light-mix-percentage: 4%;
+  --ngx-diff-heavy-mix-percentage: 10%;
+}

@@ -1,27 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 
+@import '../projects/ngx-diff/styles/default-theme';
+
 :root .my-inline-diff-theme {
-    --ngx-diff-border-color: yellow;
-    --ngx-diff-selected-border-color: blue;
-    --ngx-diff-font-family: Consolas;
-    --ngx-diff-line-number-hover-font-color: white;
-    --ngx-diff-line-number-width: 2rem;
-    --ngx-diff-font-size: 1rem;
-    --ngx-diff-line-left-padding: 1rem;
-    --ngx-diff-bottom-spacer-height: 1rem;
+  --ngx-diff-border-color: yellow;
+  --ngx-diff-selected-border-color: blue;
+  --ngx-diff-font-family: Consolas;
+  --ngx-diff-line-number-hover-font-color: white;
+  --ngx-diff-line-number-width: 2rem;
+  --ngx-diff-font-size: 1rem;
+  --ngx-diff-line-left-padding: 1rem;
+  --ngx-diff-bottom-spacer-height: 1rem;
 
-    --ngx-diff-insert-color-darker: color-mix(in srgb, var(--ngx-diff-insert-color), #000 15%);
-    --ngx-diff-insert-color-darkest: color-mix(in srgb, var(--ngx-diff-insert-color), #000 30%);
-    --ngx-diff-delete-color-darker: color-mix(in srgb, var(--ngx-diff-delete-color), #000 15%);
-    --ngx-diff-delete-color-darkest: color-mix(in srgb, var(--ngx-diff-delete-color), #000 30%);
-}
-
-
-:root .dark-theme .my-inline-diff-theme {
-    --ngx-diff-border-color: magenta;
-    --ngx-diff-selected-border-color: cyan;
-    --ngx-diff-font-family: Consolas;
-    --ngx-diff-equal-background-color: grey;
-    --ngx-diff-font-color: indigo;
-    --ngx-diff-border-width: 4px;
+  --ngx-diff-insert-color-darker: color-mix(in srgb, var(--ngx-diff-insert-color), #000 15%);
+  --ngx-diff-insert-color-darkest: color-mix(in srgb, var(--ngx-diff-insert-color), #000 30%);
+  --ngx-diff-delete-color-darker: color-mix(in srgb, var(--ngx-diff-delete-color), #000 15%);
+  --ngx-diff-delete-color-darkest: color-mix(in srgb, var(--ngx-diff-delete-color), #000 30%);
 }
