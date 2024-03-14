@@ -8,7 +8,9 @@
   <span class="inline-diff-summary-lines-removed">--- {{ diffSummary.numLinesRemoved }}</span>
 </div>
 @if (isContentEqual) {
-  <div class="inline-diff-no-changes-text">There are no changes to display.</div>
+  <div class="inline-diff">
+    <div class="inline-diff-no-changes-text">There are no changes to display.</div>
+  </div>
 }
 @if (!isContentEqual) {
   <div class="inline-diff">
