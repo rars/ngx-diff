@@ -1,5 +1,26 @@
 <mat-toolbar color="primary">
-  <span>ngx-diff</span>
+  <div class="w-full flex items-center">
+    <span>ngx-diff</span>
+    <div class="grow"></div>
+
+    <a href="https://github.com/rars/ngx-diff" mat-button>
+      <fa-icon [icon]="['fab', 'github']"></fa-icon> GitHub
+    </a>
+    <a
+      href="https://www.npmjs.com/package/ngx-diff?activeTab=readme"
+      mat-button
+    >
+      <fa-icon [icon]="['fab', 'npm']"></fa-icon> npm
+    </a>
+    <button
+      mat-icon-button
+      type="button"
+      (click)="toggleDarkMode()"
+      matTooltip="Toggle between light and dark mode"
+    >
+      <mat-icon>{{ isDarkMode ? "light_mode" : "dark_mode" }}</mat-icon>
+    </button>
+  </div>
 </mat-toolbar>
 
 <div class="container mx-auto">
@@ -8,51 +29,80 @@
       <div class="grid gap-2">
         <div class="col-span-2">
           <p>
-            ngx-diff is an Angular library for displaying unified diffs. Try
-            editing the text below to see how the diff updates:
+            ngx-diff is a free Angular library for displaying unified or
+            side-by-side diffs.
           </p>
+          <br />
+          <p>Try editing the text below to see how the diff updates:</p>
         </div>
         <div class="col-span-1">
-          <h4>Before</h4>
-          <textarea
-            class="border border-black w-full h-52 p-1"
-            [(ngModel)]="oldText"
-          ></textarea>
+          <mat-form-field class="w-full">
+            <mat-label>Before</mat-label>
+            <textarea
+              matInput
+              [(ngModel)]="oldText"
+              style="height: 13rem"
+            ></textarea>
+          </mat-form-field>
         </div>
         <div class="col-span-1">
-          <h4>After</h4>
-          <textarea
-            class="border border-black w-full h-52 p-1"
-            [(ngModel)]="newText"
-          ></textarea>
+          <mat-form-field class="w-full">
+            <mat-label>After</mat-label>
+            <textarea
+              matInput
+              [(ngModel)]="newText"
+              style="height: 13rem"
+            ></textarea>
+          </mat-form-field>
         </div>
         <div class="col-span-2">
           <div class="col-12">
-            <h4>Displayed diff</h4>
-            <inline-diff
-              [oldText]="oldText"
-              [newText]="newText"
-              [lineContextSize]="4"
-              style="width: 100%"
-            >
-            </inline-diff>
+            <mat-card appearance="outlined">
+              <mat-card-header>
+                <mat-card-title>Unified diff</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <ngx-unified-diff
+                  class="w-full my-custom-diff-theme"
+                  [ngClass]="
+                    isDarkMode
+                      ? ['ngx-diff-dark-theme']
+                      : ['ngx-diff-light-theme']
+                  "
+                  title="github.com/rars/ngx-diff/fruitlist.txt"
+                  [before]="oldText"
+                  [after]="newText"
+                  [lineContextSize]="4"
+                >
+                </ngx-unified-diff>
+              </mat-card-content>
+            </mat-card>
+            <br />
+            <mat-card appearance="outlined">
+              <mat-card-header>
+                <mat-card-title>Side-by-side diff</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <ngx-side-by-side-diff
+                  class="w-full my-custom-diff-theme"
+                  [ngClass]="
+                    isDarkMode
+                      ? ['ngx-diff-dark-theme']
+                      : ['ngx-diff-light-theme']
+                  "
+                  title="github.com/rars/ngx-diff/fruitlist.txt"
+                  [before]="oldText"
+                  [after]="newText"
+                  [lineContextSize]="4"
+                >
+                </ngx-side-by-side-diff>
+              </mat-card-content>
+            </mat-card>
           </div>
         </div>
       </div>
     </div>
   </section>
-
-  <div class="pt-2">
-    <h2>Links</h2>
-    <ul>
-      <li><a href="https://github.com/rars/ngx-diff">Github</a></li>
-      <li>
-        <a href="https://www.npmjs.com/package/ngx-diff?activeTab=readme"
-          >NPM</a
-        >
-      </li>
-    </ul>
-  </div>
 </div>
 
 <router-outlet />
