@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.0](https://github.com/rars/ngx-diff/compare/v7.0.0...v8.0.0) (2024-03-15)
+
+
+### Features
+
+* **ngx-diff:** add `ngx-unified-diff` component to replace `inline-diff`; deprecate `inline-diff` ([94b6bf4](https://github.com/rars/ngx-diff/commit/94b6bf483b9c2c6df2b3cca8899a7b0c1f0c39a4))
+* **ngx-diff:** add named light and dark themes ([f870bd8](https://github.com/rars/ngx-diff/commit/f870bd8076a47ff9639ff3b61aeec159d1d17c11))
+* **ngx-diff:** add side-by-side diff component ([6826e7e](https://github.com/rars/ngx-diff/commit/6826e7e44586e130b1fe9bf0d0cb327c61beeb9a))
+* **ngx-diff:** add title bar to inline-diff ([63183b3](https://github.com/rars/ngx-diff/commit/63183b37d169390b69600b59ad29d72898c97a85))
+
 ## [7.0.0](https://github.com/rars/ngx-diff/compare/v6.0.1...v7.0.0) (2024-03-10)
 
 ### Features
