@@ -27,15 +27,39 @@
           ></textarea>
         </div>
         <div class="col-span-2">
-          <div class="col-12">
-            <h4>Displayed diff</h4>
-            <inline-diff
-              [oldText]="oldText"
-              [newText]="newText"
-              [lineContextSize]="4"
-              style="width: 100%"
+          <h4>Options</h4>
+          <div>
+            <mat-slide-toggle [(ngModel)]="isDarkMode"
+              >Dark Mode</mat-slide-toggle
             >
-            </inline-diff>
+          </div>
+          <br />
+          <div class="col-12">
+            <h4>Unified diff</h4>
+            <ngx-unified-diff
+              class="w-full my-custom-diff-theme"
+              [ngClass]="
+                isDarkMode ? ['ngx-diff-dark-theme'] : ['ngx-diff-light-theme']
+              "
+              title="github.com/rars/ngx-diff/fruitlist.txt"
+              [before]="oldText"
+              [after]="newText"
+              [lineContextSize]="4"
+            >
+            </ngx-unified-diff>
+            <br />
+            <h4>Side-by-side diff</h4>
+            <ngx-side-by-side-diff
+              class="w-full my-custom-diff-theme"
+              [ngClass]="
+                isDarkMode ? ['ngx-diff-dark-theme'] : ['ngx-diff-light-theme']
+              "
+              title="github.com/rars/ngx-diff/fruitlist.txt"
+              [before]="oldText"
+              [after]="newText"
+              [lineContextSize]="4"
+            >
+            </ngx-side-by-side-diff>
           </div>
         </div>
       </div>
