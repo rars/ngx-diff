@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.0.1](https://github.com/rars/ngx-diff/compare/v8.0.0...v8.0.1) (2024-03-15)
+
+
+### Bug Fixes
+
+* **ngx-diff:** add UnifiedDiffComponent to exported types ([842d520](https://github.com/rars/ngx-diff/commit/842d520f333763080a2e5a00d66879ec54f7a7f1))
+
 ## [8.0.0](https://github.com/rars/ngx-diff/compare/v7.0.0...v8.0.0) (2024-03-15)
 
 
