@@ -1,48 +1,7 @@
-<div class="inline-diff-title-bar">
-  @if (title) {
-    <span>{{ title }}</span
-    >&nbsp;
-  }
-  <span class="inline-diff-summary-lines-added">+++ {{ diffSummary.numLinesAdded }}</span
-  >&nbsp;
-  <span class="inline-diff-summary-lines-removed">--- {{ diffSummary.numLinesRemoved }}</span>
-</div>
-@if (isContentEqual) {
-  <div class="inline-diff">
-    <div class="inline-diff-no-changes-text">There are no changes to display.</div>
-  </div>
-}
-@if (!isContentEqual) {
-  <div class="inline-diff">
-    <div class="inline-diff-margin">
-      @for (lineDiff of calculatedDiff; track lineDiff; let idx = $index) {
-        <div
-          class="line-selector"
-          [ngClass]="
-            lineDiff === selectedLine ? [lineDiff.cssClass, 'selected'] : [lineDiff.cssClass]
-          "
-          (click)="selectLine(idx, lineDiff)"
-        >
-          <div class="inline-diff-old">{{ lineDiff.lineNumberInOldText | lineNumber }}</div>
-          <div class="inline-diff-new">{{ lineDiff.lineNumberInNewText | lineNumber }}</div>
-        </div>
-      }
-      <div class="dmp-margin-bottom-spacer"></div>
-    </div>
-    <div class="inline-diff-content">
-      <div class="inline-diff-content-wrapper">
-        @for (lineDiff of calculatedDiff; track lineDiff) {
-          <div
-            class="line-content"
-            [ngClass]="
-              lineDiff === selectedLine ? [lineDiff.cssClass, 'selected'] : [lineDiff.cssClass]
-            "
-          >
-            <div class="inline-diff-text">{{ lineDiff.line }}</div>
-          </div>
-        }
-        <div class="dmp-margin-bottom-spacer line-content"></div>
-      </div>
-    </div>
-  </div>
-}
+<ngx-unified-diff
+  [title]="title"
+  [before]="oldText"
+  [after]="newText"
+  [lineContextSize]="lineContextSize"
+  (selectedLineChange)="onSelectedLineChange($event)"
+></ngx-unified-diff>
