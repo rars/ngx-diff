@@ -25,6 +25,8 @@
   },
   "homepage": "https://github.com/rars/ngx-diff#readme",
   "exports": {
-    "./styles/": "./styles/"
+    "./styles/*": {
+      "style": "./styles/*.css"
+    }
   }
 }
