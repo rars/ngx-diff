@@ -54,7 +54,7 @@ div.sbs-diff-content-wrapper {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  width: 100%;
+  min-width: 100%;
 }
 
 div.sbs-diff-old {
