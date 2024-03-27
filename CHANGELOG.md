@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.0.4](https://github.com/rars/ngx-diff/compare/v8.0.3...v8.0.4) (2024-03-27)
+
+
+### Bug Fixes
+
+* **ngx-diff:** make background color fill full width in horizontal overflow ([02cdc16](https://github.com/rars/ngx-diff/commit/02cdc16a7c47dce4c88dc5ad872db25ae8a3fd1b))
+
 ### [8.0.3](https://github.com/rars/ngx-diff/compare/v8.0.2...v8.0.3) (2024-03-27)
 
 
