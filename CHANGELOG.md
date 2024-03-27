@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.0.3](https://github.com/rars/ngx-diff/compare/v8.0.2...v8.0.3) (2024-03-27)
+
+
+### Bug Fixes
+
+* **ngx-diff:** avoid directory export for style CSS ([1f44b34](https://github.com/rars/ngx-diff/commit/1f44b34670e08b788692f369a5fe3514eb94d5cb))
+
 ### [8.0.2](https://github.com/rars/ngx-diff/compare/v8.0.1...v8.0.2) (2024-03-27)
 
 
