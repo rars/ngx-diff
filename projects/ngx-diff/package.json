@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/rars/ngx-diff/issues"
   },
-  "homepage": "https://github.com/rars/ngx-diff#readme"
+  "homepage": "https://github.com/rars/ngx-diff#readme",
+  "exports": {
+    "./styles/": "./styles/"
+  }
 }
