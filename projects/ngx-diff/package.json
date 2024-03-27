@@ -1,6 +1,6 @@
 {
   "name": "ngx-diff",
-  "version": "8.0.1",
+  "version": "8.0.2",
   "peerDependencies": {
     "@angular/common": ">=17.0.0",
     "@angular/core": ">=17.0.0",
@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/rars/ngx-diff/issues"
   },
-  "homepage": "https://github.com/rars/ngx-diff#readme"
+  "homepage": "https://github.com/rars/ngx-diff#readme",
+  "exports": {
+    "./styles/": "./styles/"
+  }
 }
