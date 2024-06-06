@@ -139,6 +139,7 @@ It is recommended to use these settings rather than attempt to override styles b
 | 15              | 4.0.0            |
 | 16              | 5.0.0            |
 | 17              | 6.0.0+           |
+| 18              | 9.0.0+           |
 
 ## Contributions welcome!
 

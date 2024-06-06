@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.0.0](https://github.com/rars/ngx-diff/compare/v8.0.4...v9.0.0) (2024-06-06)
+
+
+### Features
+
+* **ngx-diff:** update to Angular 18 ([97b053a](https://github.com/rars/ngx-diff/commit/97b053ab221312b2ad9f7344ce95375eaf53c870))
+
 ### [8.0.4](https://github.com/rars/ngx-diff/compare/v8.0.3...v8.0.4) (2024-03-27)
 
 
