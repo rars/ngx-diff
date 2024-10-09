@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.1.0](https://github.com/rars/ngx-diff/compare/v9.0.0...v9.1.0) (2024-10-09)
+
+
+### Features
+
+* **ngx-diff:** improve tracking on line diff DOM elements ([ffe25bd](https://github.com/rars/ngx-diff/commit/ffe25bd73079db06695265ef03b2ee2200de5e5e))
+
 ## [9.0.0](https://github.com/rars/ngx-diff/compare/v8.0.4...v9.0.0) (2024-06-06)
 
 
