@@ -13,6 +13,7 @@ interface IDiffCalculation {
 }
 
 interface ILine {
+  id: string;
   type: LineDiffType;
   lineNumber: number | null;
   line: string | null;
@@ -145,6 +146,7 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
       const prefixLines = this.createLineDiffs(prefix, beforeLineNumber, afterLineNumber);
 
       const newPlaceholder: ILine = {
+        id: `skip-${beforeLineNumber}-${afterLineNumber}-${remainingSkippedLines.length}`,
         type: LineDiffType.Placeholder,
         lineNumber: null,
         line: `... ${remainingSkippedLines.length} hidden lines ...`,
@@ -202,12 +204,14 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
       };
 
       beforeLineDiffs.push({
+        id: `eql-${beforeLineNumber}`,
         ...toInsert,
         lineNumber: beforeLineNumber,
       });
       beforeLineNumber++;
 
       afterLineDiffs.push({
+        id: `eql-${afterLineNumber}`,
         ...toInsert,
         lineNumber: afterLineNumber,
       });
@@ -319,6 +323,7 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
 
         // Output a special line indicating that some content is equal and has been skipped
         const skippedLine = {
+          id: `skip-${diffCalculation.beforeLineNumber}-${diffCalculation.afterLineNumber}-${skippedLines.length}`,
           type: LineDiffType.Placeholder,
           lineNumber: null,
           line: `... ${skippedLines.length} hidden lines ...`,
@@ -353,6 +358,7 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
   private outputEqualDiffLines(diffLines: string[], diffCalculation: IDiffCalculation): void {
     for (const line of diffLines) {
       this.beforeLines.push({
+        id: `eql-${diffCalculation.beforeLineNumber}`,
         type: LineDiffType.Equal,
         lineNumber: diffCalculation.beforeLineNumber,
         line,
@@ -360,6 +366,7 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
       });
 
       this.afterLines.push({
+        id: `eql-${diffCalculation.afterLineNumber}`,
         type: LineDiffType.Equal,
         lineNumber: diffCalculation.afterLineNumber,
         line,
@@ -374,6 +381,7 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
   private outputDeleteDiff(diffLines: string[], diffCalculation: IDiffCalculation): void {
     for (const line of diffLines) {
       this.beforeLines.push({
+        id: `del-${diffCalculation.beforeLineNumber}`,
         type: LineDiffType.Delete,
         lineNumber: diffCalculation.beforeLineNumber,
         line,
@@ -381,6 +389,7 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
       });
 
       this.afterLines.push({
+        id: `del-${diffCalculation.beforeLineNumber}`,
         type: LineDiffType.Delete,
         lineNumber: null,
         line: null,
@@ -394,6 +403,7 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
   private outputInsertDiff(diffLines: string[], diffCalculation: IDiffCalculation): void {
     for (const line of diffLines) {
       this.beforeLines.push({
+        id: `ins-${diffCalculation.afterLineNumber}`,
         type: LineDiffType.Insert,
         lineNumber: null,
         line: null,
@@ -401,6 +411,7 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
       });
 
       this.afterLines.push({
+        id: `ins-${diffCalculation.afterLineNumber}`,
         type: LineDiffType.Insert,
         lineNumber: diffCalculation.afterLineNumber,
         line,

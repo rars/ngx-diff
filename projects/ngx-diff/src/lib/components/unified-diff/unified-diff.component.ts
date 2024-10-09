@@ -10,6 +10,7 @@ import { LineNumberPipe } from '../../pipes/line-number/line-number.pipe';
 import { NgClass } from '@angular/common';
 
 type LineDiff = {
+  id: string;
   type: LineDiffType;
   lineNumberInOldText: number | null;
   lineNumberInNewText: number | null;
@@ -105,6 +106,7 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
       const prefixLines = this.createLineDiffs(prefix, lineInOldText, lineInNewText);
 
       const newPlaceholder: LineDiff = {
+        id: `skip-${lineInOldText + prefix.length}-${lineInNewText + prefix.length}-${remainingSkippedLines.length}`,
         type: LineDiffType.Placeholder,
         lineNumberInOldText: null,
         lineNumberInNewText: null,
@@ -144,6 +146,7 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
 
     for (const line of lines) {
       linesToInsert.push({
+        id: `eql-${lineNumberInOldText}-${lineNumberInNewText}`,
         type: LineDiffType.Equal,
         lineNumberInOldText,
         lineNumberInNewText,
@@ -213,8 +216,9 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
     }
 
     this.calculatedDiff = diffCalculation.lines.map(
-      ({ type, lineNumberInOldText, lineNumberInNewText, line, args }) => {
+      ({ id, type, lineNumberInOldText, lineNumberInNewText, line, args }) => {
         return {
+          id,
           type,
           lineNumberInOldText,
           lineNumberInNewText,
@@ -272,6 +276,7 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
 
         // Output a special line indicating that some content is equal and has been skipped
         diffCalculation.lines.push({
+          id: `skip-${diffCalculation.lineInOldText}-${diffCalculation.lineInNewText}-${skippedLines.length}`,
           type: LineDiffType.Placeholder,
           lineNumberInOldText: null,
           lineNumberInNewText: null,
@@ -302,6 +307,7 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
   private outputEqualDiffLines(diffLines: string[], diffCalculation: IDiffCalculation): void {
     for (const line of diffLines) {
       diffCalculation.lines.push({
+        id: `eql-${diffCalculation.lineInOldText}-${diffCalculation.lineInNewText}`,
         type: LineDiffType.Equal,
         lineNumberInOldText: diffCalculation.lineInOldText,
         lineNumberInNewText: diffCalculation.lineInNewText,
@@ -315,6 +321,7 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
   private outputDeleteDiff(diffLines: string[], diffCalculation: IDiffCalculation): void {
     for (const line of diffLines) {
       diffCalculation.lines.push({
+        id: `del-${diffCalculation.lineInOldText}`,
         type: LineDiffType.Delete,
         lineNumberInOldText: diffCalculation.lineInOldText,
         lineNumberInNewText: null,
@@ -327,6 +334,7 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
   private outputInsertDiff(diffLines: string[], diffCalculation: IDiffCalculation): void {
     for (const line of diffLines) {
       diffCalculation.lines.push({
+        id: `ins-${diffCalculation.lineInNewText}`,
         type: LineDiffType.Insert,
         lineNumberInOldText: null,
         lineNumberInNewText: diffCalculation.lineInNewText,

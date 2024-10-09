@@ -15,7 +15,7 @@
 @if (!isContentEqual) {
   <div class="ufd-diff">
     <div class="ufd-diff-margin">
-      @for (lineDiff of calculatedDiff; track lineDiff; let idx = $index) {
+      @for (lineDiff of calculatedDiff; track lineDiff.id; let idx = $index) {
         <div
           class="line-selector"
           [ngClass]="
@@ -31,7 +31,7 @@
     </div>
     <div class="ufd-diff-content">
       <div class="ufd-diff-content-wrapper">
-        @for (lineDiff of calculatedDiff; track lineDiff) {
+        @for (lineDiff of calculatedDiff; track lineDiff.id) {
           <div
             class="line-content"
             [ngClass]="

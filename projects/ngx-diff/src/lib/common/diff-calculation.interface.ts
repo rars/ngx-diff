@@ -7,6 +7,7 @@ import { LineDiffType } from './line-diff-type';
  */
 export interface IDiffCalculation {
   lines: Array<{
+    id: string;
     type: LineDiffType;
     lineNumberInOldText: number | null;
     lineNumberInNewText: number | null;
