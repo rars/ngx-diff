@@ -26,11 +26,10 @@ interface ILine {
 }
 
 @Component({
-  selector: 'ngx-side-by-side-diff',
-  standalone: true,
-  imports: [NgClass, LineNumberPipe],
-  templateUrl: './side-by-side-diff.component.html',
-  styleUrl: './side-by-side-diff.component.scss',
+    selector: 'ngx-side-by-side-diff',
+    imports: [NgClass, LineNumberPipe],
+    templateUrl: './side-by-side-diff.component.html',
+    styleUrl: './side-by-side-diff.component.scss'
 })
 export class SideBySideDiffComponent implements OnInit, OnChanges {
   /**
