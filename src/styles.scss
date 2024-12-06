@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import '../projects/ngx-diff/styles/default-theme';
+@use '../projects/ngx-diff/styles/default-theme';
 
 :root .my-inline-diff-theme {
   --ngx-diff-border-color: yellow;
