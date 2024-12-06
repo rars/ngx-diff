@@ -20,11 +20,10 @@ type LineDiff = {
 };
 
 @Component({
-  selector: 'ngx-unified-diff',
-  standalone: true,
-  imports: [NgClass, LineNumberPipe],
-  templateUrl: './unified-diff.component.html',
-  styleUrl: './unified-diff.component.scss',
+    selector: 'ngx-unified-diff',
+    imports: [NgClass, LineNumberPipe],
+    templateUrl: './unified-diff.component.html',
+    styleUrl: './unified-diff.component.scss'
 })
 export class UnifiedDiffComponent implements OnInit, OnChanges {
   /**

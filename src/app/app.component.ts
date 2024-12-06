@@ -3,11 +3,10 @@ import { InlineDiffComponent, SideBySideDiffComponent } from 'ngx-diff';
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  standalone: true,
-  imports: [InlineDiffComponent, SideBySideDiffComponent],
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    imports: [InlineDiffComponent, SideBySideDiffComponent]
 })
 export class AppComponent {
   public oldText = `common text

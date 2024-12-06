@@ -73,7 +73,7 @@ For version 3+, you can customise the appearance of the diff through various CSS
 In version 8.0.0, a light and dark theme was introduced. This should be imported to your application `styles.scss` file or equivalent.
 
 ```scss
-@import 'ngx-diff/styles/default-theme';
+@use 'ngx-diff/styles/default-theme';
 ```
 
 You can then use the provided `ngx-diff-light-theme` or `ngx-diff-dark-theme` classes.
@@ -140,6 +140,7 @@ It is recommended to use these settings rather than attempt to override styles b
 | 16              | 5.0.0            |
 | 17              | 6.0.0+           |
 | 18              | 9.0.0+           |
+| 19              | 10.0.0+          |
 
 ## Contributions welcome!
 

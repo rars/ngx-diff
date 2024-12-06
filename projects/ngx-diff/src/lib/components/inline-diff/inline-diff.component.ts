@@ -8,12 +8,11 @@ import { UnifiedDiffComponent } from '../unified-diff/unified-diff.component';
  * @deprecated use ngx-unified-diff instead.
  */
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
-  selector: 'inline-diff',
-  templateUrl: './inline-diff.component.html',
-  styleUrls: ['./inline-diff.component.scss'],
-  standalone: true,
-  imports: [UnifiedDiffComponent],
+    // eslint-disable-next-line @angular-eslint/component-selector
+    selector: 'inline-diff',
+    templateUrl: './inline-diff.component.html',
+    styleUrls: ['./inline-diff.component.scss'],
+    imports: [UnifiedDiffComponent]
 })
 export class InlineDiffComponent {
   /**
