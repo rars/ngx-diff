@@ -24,7 +24,7 @@
     "@commitlint/cli": "^19.2.0",
     "@commitlint/config-conventional": "^19.1.0",
     "diff-match-patch-ts": "^0.6.0",
-    "rxjs": "~7.8.1",
+    "rxjs": "~7.8.2",
     "standard-version": "^9.3.2",
     "tslib": "^2.3.1",
     "zone.js": "~0.15.0"
@@ -40,11 +40,11 @@
     "@angular/cli": "^19.2.14",
     "@angular/compiler-cli": "^19.2.14",
     "@angular/language-service": "^19.2.14",
-    "@trivago/prettier-plugin-sort-imports": "^5.0.1",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/jasmine": "^5.1.4",
     "@types/jasminewd2": "~2.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.7.0",
-    "@typescript-eslint/parser": "^8.7.0",
+    "@typescript-eslint/eslint-plugin": "^8.33.0",
+    "@typescript-eslint/parser": "^8.33.0",
     "eslint": "^9.16.0",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-jsdoc": "50.6.0",
@@ -59,7 +59,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "^2.0.0",
     "ng-packagr": "^19.2.2",
-    "prettier": "^3.2.2",
+    "prettier": "^3.5.3",
     "typescript": "^5.8.3"
   },
   "standard-version": {
