@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
 import { Diff, DiffOp } from 'diff-match-patch-ts';
 import { DiffMatchPatchService } from '../../services/diff-match-patch/diff-match-patch.service';
 
@@ -32,6 +32,8 @@ interface ILine {
     styleUrl: './side-by-side-diff.component.scss'
 })
 export class SideBySideDiffComponent implements OnInit, OnChanges {
+  private readonly dmp = inject(DiffMatchPatchService);
+
   /**
    * Optional title to be displayed at the top of the diff.
    */
@@ -63,8 +65,6 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
   public beforeLines: ILine[] = [];
   public afterLines: ILine[] = [];
   public selectedLineIndex?: number;
-
-  public constructor(private readonly dmp: DiffMatchPatchService) {}
 
   public ngOnInit(): void {
     this.update();

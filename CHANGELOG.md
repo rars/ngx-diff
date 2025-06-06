@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.0.0](https://github.com/rars/ngx-diff/compare/v10.0.0...v11.0.0) (2025-06-06)
+
+
+### Features
+
+* update to Angular 20 ([efcc59f](https://github.com/rars/ngx-diff/commit/efcc59fd0a4c17656e0cee3edec39cca621f841e))
+
 ## [10.0.0](https://github.com/rars/ngx-diff/compare/v9.1.0...v10.0.0) (2024-12-06)
 
 

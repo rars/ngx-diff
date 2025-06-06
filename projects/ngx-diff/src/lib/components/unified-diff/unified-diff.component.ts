@@ -1,6 +1,6 @@
 import { Diff, DiffOp } from 'diff-match-patch-ts';
 
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
 
 import { IDiffCalculation } from '../../common/diff-calculation.interface';
 import { LineDiffType } from '../../common/line-diff-type';
@@ -26,6 +26,8 @@ type LineDiff = {
     styleUrl: './unified-diff.component.scss'
 })
 export class UnifiedDiffComponent implements OnInit, OnChanges {
+  private readonly dmp = inject(DiffMatchPatchService);
+
   /**
    * Optional title to be displayed at the top of the diff.
    */
@@ -52,8 +54,6 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
   public calculatedDiff: LineDiff[] = [];
   public selectedLine?: LineDiff;
   public isContentEqual: boolean = false;
-
-  public constructor(private readonly dmp: DiffMatchPatchService) {}
 
   public ngOnInit(): void {
     this.updateHtml();
