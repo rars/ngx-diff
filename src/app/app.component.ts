@@ -1,12 +1,13 @@
 import { InlineDiffComponent, SideBySideDiffComponent } from 'ngx-diff';
 
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
-    imports: [InlineDiffComponent, SideBySideDiffComponent]
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  imports: [FormsModule, InlineDiffComponent, SideBySideDiffComponent],
 })
 export class AppComponent {
   public oldText = `common text

@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { Diff, DiffOp } from 'diff-match-patch-ts';
 import { DiffMatchPatchService } from '../../services/diff-match-patch/diff-match-patch.service';
 
@@ -25,60 +34,82 @@ interface ILine {
   };
 }
 
+type LineDiffResult = {
+  isContentEqual: boolean;
+  beforeLines: ILine[];
+  afterLines: ILine[];
+  diffSummary: {
+    numLinesAdded: number;
+    numLinesRemoved: number;
+  };
+};
+
+const transformToString = (value: string | number | boolean | undefined) => {
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return value.toString();
+  }
+
+  return value ?? '';
+};
+
 @Component({
-    selector: 'ngx-side-by-side-diff',
-    imports: [NgClass, LineNumberPipe],
-    templateUrl: './side-by-side-diff.component.html',
-    styleUrl: './side-by-side-diff.component.scss'
+  selector: 'ngx-side-by-side-diff',
+  imports: [NgClass, LineNumberPipe],
+  templateUrl: './side-by-side-diff.component.html',
+  styleUrl: './side-by-side-diff.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SideBySideDiffComponent implements OnInit, OnChanges {
+export class SideBySideDiffComponent {
   private readonly dmp = inject(DiffMatchPatchService);
 
   /**
    * Optional title to be displayed at the top of the diff.
    */
-  @Input({ required: false })
-  public title?: string;
-
-  @Input({ required: true })
-  public before?: string;
-
-  @Input({ required: true })
-  public after?: string;
+  public readonly title = input<string>();
+  public readonly before = input.required<string | number | boolean | undefined>();
+  public readonly after = input.required<string | number | boolean | undefined>();
 
   /**
    * The number of lines of context to provide either side of a DiffOp.Insert or DiffOp.Delete diff.
    * Context is taken from a DiffOp.Equal section.
    */
-  @Input({ required: false })
-  public lineContextSize?: number;
+  public readonly lineContextSize = input<number>();
 
-  @Output()
-  public selectedLineChange = new EventEmitter<LineSelectEvent>();
+  public readonly selectedLineChange = output<LineSelectEvent>();
 
-  public isContentEqual = false;
-  public diffSummary = {
-    numLinesAdded: 0,
-    numLinesRemoved: 0,
-  };
+  public readonly isContentEqual = computed(() => this.lineDiffResult().isContentEqual);
+  public readonly diffSummary = computed(() => this.lineDiffResult().diffSummary);
 
-  public beforeLines: ILine[] = [];
-  public afterLines: ILine[] = [];
+  public readonly beforeLines = signal<ILine[]>([]); // computed(() => this.lineDiffResult().beforeLines);
+  public readonly afterLines = signal<ILine[]>([]); // computed(() => this.lineDiffResult().afterLines);
+
   public selectedLineIndex?: number;
 
-  public ngOnInit(): void {
-    this.update();
-  }
+  private readonly beforeText = computed(() => transformToString(this.before()));
+  private readonly afterText = computed(() => transformToString(this.after()));
 
-  public ngOnChanges(): void {
-    this.update();
+  private readonly lineDiffs = computed(() => {
+    return this.dmp.computeLineDiff(this.beforeText(), this.afterText());
+  });
+
+  private readonly lineDiffResult = computed(() => {
+    return this.calculateLineDiffs(this.lineDiffs());
+  });
+
+  public constructor() {
+    effect(() => {
+      this.beforeLines.set(this.lineDiffResult().beforeLines);
+    });
+    effect(() => {
+      this.afterLines.set(this.lineDiffResult().afterLines);
+    });
   }
 
   public selectLine(index: number): void {
     this.selectedLineIndex = index;
 
-    const selectedBeforeLine = this.beforeLines[index];
-    const selectedAfterLine = this.afterLines[index];
+    const selectedBeforeLine = this.beforeLines()[index];
+    const selectedAfterLine = this.afterLines()[index];
 
     const type = selectedAfterLine.type;
 
@@ -121,8 +152,17 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
   private expandPlaceholder(index: number, placeholder: ILine): void {
     const replacementLines = this.getPlaceholderReplacementLines(placeholder);
 
-    this.beforeLines.splice(index, 1, ...replacementLines.beforeLineDiffs);
-    this.afterLines.splice(index, 1, ...replacementLines.afterLineDiffs);
+    this.beforeLines.update((beforeLines) => {
+      const newBeforeLines = [...beforeLines];
+      newBeforeLines.splice(index, 1, ...replacementLines.beforeLineDiffs);
+      return newBeforeLines;
+    });
+
+    this.afterLines.update((afterLines) => {
+      const newAfterLines = [...afterLines];
+      newAfterLines.splice(index, 1, ...replacementLines.afterLineDiffs);
+      return newAfterLines;
+    });
   }
 
   private getPlaceholderReplacementLines(placeholder: ILine): {
@@ -131,18 +171,21 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
   } {
     const { skippedLines, beforeLineNumber, afterLineNumber } = placeholder.args!;
 
-    if (this.lineContextSize && skippedLines.length > 2 * this.lineContextSize) {
-      const prefix = skippedLines.slice(0, this.lineContextSize);
-      const remainingSkippedLines = skippedLines.slice(
-        this.lineContextSize,
-        skippedLines.length - this.lineContextSize,
-      );
-      const suffix = skippedLines.slice(
-        skippedLines.length - this.lineContextSize,
-        skippedLines.length,
-      );
+    const lineContextSize = this.lineContextSize();
 
-      const prefixLines = this.createLineDiffs(prefix, beforeLineNumber, afterLineNumber);
+    if (lineContextSize && skippedLines.length > 2 * lineContextSize) {
+      const prefix = skippedLines.slice(0, lineContextSize);
+      const remainingSkippedLines = skippedLines.slice(
+        lineContextSize,
+        skippedLines.length - lineContextSize,
+      );
+      const suffix = skippedLines.slice(skippedLines.length - lineContextSize, skippedLines.length);
+
+      const prefixLines = SideBySideDiffComponent.createLineDiffs(
+        prefix,
+        beforeLineNumber,
+        afterLineNumber,
+      );
 
       const newPlaceholder: ILine = {
         id: `skip-${beforeLineNumber}-${afterLineNumber}-${remainingSkippedLines.length}`,
@@ -154,12 +197,12 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
           beforeLineNumber: beforeLineNumber + prefix.length,
           afterLineNumber: afterLineNumber + prefix.length,
         },
-        cssClass: this.getCssClass(LineDiffType.Placeholder),
+        cssClass: SideBySideDiffComponent.getCssClass(LineDiffType.Placeholder),
       };
 
       const numberOfPrefixAndSkippedLines = prefix.length + remainingSkippedLines.length;
 
-      const suffixLines = this.createLineDiffs(
+      const suffixLines = SideBySideDiffComponent.createLineDiffs(
         suffix,
         beforeLineNumber + numberOfPrefixAndSkippedLines,
         afterLineNumber + numberOfPrefixAndSkippedLines,
@@ -179,10 +222,10 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
       };
     }
 
-    return this.createLineDiffs(skippedLines, beforeLineNumber, afterLineNumber);
+    return SideBySideDiffComponent.createLineDiffs(skippedLines, beforeLineNumber, afterLineNumber);
   }
 
-  private createLineDiffs(
+  private static createLineDiffs(
     lines: string[],
     startLineInOldText: number,
     startLineInNewText: number,
@@ -220,33 +263,30 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
     return { beforeLineDiffs, afterLineDiffs };
   }
 
-  private update(): void {
-    const beforeText = this.before ?? '';
-    const afterText = this.after ?? '';
-    this.calculateLineDiffs(this.dmp.computeLineDiff(beforeText, afterText));
-  }
-
-  private calculateLineDiffs(diffs: Diff[]): void {
-    this.beforeLines = [];
-    this.afterLines = [];
+  private calculateLineDiffs(diffs: Diff[]): LineDiffResult {
+    const beforeLines: ILine[] = [];
+    const afterLines: ILine[] = [];
 
     const diffCalculation = {
       beforeLineNumber: 1,
       afterLineNumber: 1,
     };
 
-    this.isContentEqual = diffs.length === 1 && diffs[0][0] === DiffOp.Equal;
+    const isContentEqual = diffs.length === 1 && diffs[0][0] === DiffOp.Equal;
 
-    if (this.isContentEqual) {
-      this.beforeLines = [];
-      this.afterLines = [];
-      this.diffSummary = {
-        numLinesAdded: 0,
-        numLinesRemoved: 0,
+    if (isContentEqual) {
+      return {
+        beforeLines,
+        afterLines,
+        diffSummary: {
+          numLinesAdded: 0,
+          numLinesRemoved: 0,
+        },
+        isContentEqual,
       };
-      return;
     }
 
+    const lineContextSize = this.lineContextSize();
     for (let i = 0; i < diffs.length; i++) {
       const diff = diffs[i];
       const diffLines: string[] = diff[1].split(/\r?\n/);
@@ -261,23 +301,48 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
         case DiffOp.Equal: {
           const isFirstDiff = i === 0;
           const isLastDiff = i === diffs.length - 1;
-          this.outputEqualDiff(diffLines, diffCalculation, isFirstDiff, isLastDiff);
+          SideBySideDiffComponent.outputEqualDiff(
+            diffLines,
+            diffCalculation,
+            isFirstDiff,
+            isLastDiff,
+            lineContextSize,
+            beforeLines,
+            afterLines,
+          );
           break;
         }
         case DiffOp.Delete: {
-          this.outputDeleteDiff(diffLines, diffCalculation);
+          SideBySideDiffComponent.outputDeleteDiff(
+            diffLines,
+            diffCalculation,
+            beforeLines,
+            afterLines,
+          );
           break;
         }
         case DiffOp.Insert: {
-          this.outputInsertDiff(diffLines, diffCalculation);
+          SideBySideDiffComponent.outputInsertDiff(
+            diffLines,
+            diffCalculation,
+            beforeLines,
+            afterLines,
+          );
           break;
         }
       }
     }
 
-    this.diffSummary = {
-      numLinesAdded: this.afterLines.filter((x) => x.type === LineDiffType.Insert).length,
-      numLinesRemoved: this.beforeLines.filter((x) => x.type === LineDiffType.Delete).length,
+    const diffSummary = {
+      numLinesAdded: afterLines.filter((x) => x.type === LineDiffType.Insert).length,
+      numLinesRemoved: beforeLines.filter((x) => x.type === LineDiffType.Delete).length,
+    };
+
+    return {
+      beforeLines,
+      afterLines,
+      diffSummary,
+      isContentEqual,
     };
   }
 
@@ -295,30 +360,35 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
    * A document cannot consist of a single Diff with DiffOp.Equal and reach this function because
    * in this case the calculateLineDiff method returns early.
    */
-  private outputEqualDiff(
+  private static outputEqualDiff(
     diffLines: string[],
     diffCalculation: IDiffCalculation,
     isFirstDiff: boolean,
     isLastDiff: boolean,
+    lineContextSize: number | undefined,
+    beforeLines: ILine[],
+    afterLines: ILine[],
   ): void {
-    if (this.lineContextSize && diffLines.length > this.lineContextSize) {
+    if (lineContextSize && diffLines.length > lineContextSize) {
       if (isFirstDiff) {
         // Take the last 'lineContextSize' lines from the first diff
-        const lineIncrement = diffLines.length - this.lineContextSize;
+        const lineIncrement = diffLines.length - lineContextSize;
         diffCalculation.beforeLineNumber += lineIncrement;
         diffCalculation.afterLineNumber += lineIncrement;
-        diffLines = diffLines.slice(diffLines.length - this.lineContextSize, diffLines.length);
+        diffLines = diffLines.slice(diffLines.length - lineContextSize, diffLines.length);
       } else if (isLastDiff) {
         // Take only the first 'lineContextSize' lines from the final diff
-        diffLines = diffLines.slice(0, this.lineContextSize);
-      } else if (diffLines.length > 2 * this.lineContextSize) {
+        diffLines = diffLines.slice(0, lineContextSize);
+      } else if (diffLines.length > 2 * lineContextSize) {
         // Take the first 'lineContextSize' lines from this diff to provide context for the last diff
-        this.outputEqualDiffLines(diffLines.slice(0, this.lineContextSize), diffCalculation);
-
-        const skippedLines = diffLines.slice(
-          this.lineContextSize,
-          diffLines.length - this.lineContextSize,
+        this.outputEqualDiffLines(
+          diffLines.slice(0, lineContextSize),
+          diffCalculation,
+          beforeLines,
+          afterLines,
         );
+
+        const skippedLines = diffLines.slice(lineContextSize, diffLines.length - lineContextSize);
 
         // Output a special line indicating that some content is equal and has been skipped
         const skippedLine = {
@@ -334,29 +404,36 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
           },
         };
 
-        this.beforeLines.push(skippedLine);
-        this.afterLines.push(skippedLine);
+        beforeLines.push(skippedLine);
+        afterLines.push(skippedLine);
 
-        const numberOfSkippedLines = diffLines.length - 2 * this.lineContextSize;
+        const numberOfSkippedLines = diffLines.length - 2 * lineContextSize;
         diffCalculation.beforeLineNumber += numberOfSkippedLines;
         diffCalculation.afterLineNumber += numberOfSkippedLines;
 
         // Take the last 'lineContextSize' lines from this diff to provide context for the next diff
         this.outputEqualDiffLines(
-          diffLines.slice(diffLines.length - this.lineContextSize),
+          diffLines.slice(diffLines.length - lineContextSize),
           diffCalculation,
+          beforeLines,
+          afterLines,
         );
         // This if branch has already output the diff lines so we return early to avoid outputting the lines
         // at the end of the method.
         return;
       }
     }
-    this.outputEqualDiffLines(diffLines, diffCalculation);
+    this.outputEqualDiffLines(diffLines, diffCalculation, beforeLines, afterLines);
   }
 
-  private outputEqualDiffLines(diffLines: string[], diffCalculation: IDiffCalculation): void {
+  private static outputEqualDiffLines(
+    diffLines: string[],
+    diffCalculation: IDiffCalculation,
+    beforeLines: ILine[],
+    afterLines: ILine[],
+  ): void {
     for (const line of diffLines) {
-      this.beforeLines.push({
+      beforeLines.push({
         id: `eql-${diffCalculation.beforeLineNumber}`,
         type: LineDiffType.Equal,
         lineNumber: diffCalculation.beforeLineNumber,
@@ -364,7 +441,7 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
         cssClass: this.getCssClass(LineDiffType.Equal),
       });
 
-      this.afterLines.push({
+      afterLines.push({
         id: `eql-${diffCalculation.afterLineNumber}`,
         type: LineDiffType.Equal,
         lineNumber: diffCalculation.afterLineNumber,
@@ -377,9 +454,14 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
     }
   }
 
-  private outputDeleteDiff(diffLines: string[], diffCalculation: IDiffCalculation): void {
+  private static outputDeleteDiff(
+    diffLines: string[],
+    diffCalculation: IDiffCalculation,
+    beforeLines: ILine[],
+    afterLines: ILine[],
+  ): void {
     for (const line of diffLines) {
-      this.beforeLines.push({
+      beforeLines.push({
         id: `del-${diffCalculation.beforeLineNumber}`,
         type: LineDiffType.Delete,
         lineNumber: diffCalculation.beforeLineNumber,
@@ -387,7 +469,7 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
         cssClass: this.getCssClass(LineDiffType.Delete),
       });
 
-      this.afterLines.push({
+      afterLines.push({
         id: `del-${diffCalculation.beforeLineNumber}`,
         type: LineDiffType.Delete,
         lineNumber: null,
@@ -399,9 +481,14 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
     }
   }
 
-  private outputInsertDiff(diffLines: string[], diffCalculation: IDiffCalculation): void {
+  private static outputInsertDiff(
+    diffLines: string[],
+    diffCalculation: IDiffCalculation,
+    beforeLines: ILine[],
+    afterLines: ILine[],
+  ): void {
     for (const line of diffLines) {
-      this.beforeLines.push({
+      beforeLines.push({
         id: `ins-${diffCalculation.afterLineNumber}`,
         type: LineDiffType.Insert,
         lineNumber: null,
@@ -409,7 +496,7 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
         cssClass: this.getCssClass(LineDiffType.Insert),
       });
 
-      this.afterLines.push({
+      afterLines.push({
         id: `ins-${diffCalculation.afterLineNumber}`,
         type: LineDiffType.Insert,
         lineNumber: diffCalculation.afterLineNumber,
@@ -421,7 +508,7 @@ export class SideBySideDiffComponent implements OnInit, OnChanges {
     }
   }
 
-  private getCssClass(type: LineDiffType): string {
+  private static getCssClass(type: LineDiffType): string {
     switch (type) {
       case LineDiffType.Placeholder:
       case LineDiffType.Equal:
