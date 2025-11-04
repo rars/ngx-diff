@@ -8,12 +8,13 @@ describe('SideBySideDiffComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SideBySideDiffComponent]
-    })
-    .compileComponents();
-    
+      imports: [SideBySideDiffComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(SideBySideDiffComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('before', 'a');
+    fixture.componentRef.setInput('after', 'b');
     fixture.detectChanges();
   });
 

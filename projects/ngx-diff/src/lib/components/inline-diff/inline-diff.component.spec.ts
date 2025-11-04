@@ -31,6 +31,8 @@ describe('InlineDiffComponent', () => {
 
     fixture = TestBed.createComponent(InlineDiffComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('oldText', 'a');
+    fixture.componentRef.setInput('newText', 'b');
     fixture.detectChanges();
   });
 

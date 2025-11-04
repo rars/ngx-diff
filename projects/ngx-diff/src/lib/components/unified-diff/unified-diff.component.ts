@@ -1,6 +1,15 @@
 import { Diff, DiffOp } from 'diff-match-patch-ts';
 
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 
 import { IDiffCalculation } from '../../common/diff-calculation.interface';
 import { LineDiffType } from '../../common/line-diff-type';
@@ -19,48 +28,69 @@ type LineDiff = {
   cssClass: string;
 };
 
+type LineDiffResult = {
+  isContentEqual: boolean;
+  calculatedDiff: LineDiff[];
+  diffSummary: {
+    numLinesAdded: number;
+    numLinesRemoved: number;
+  };
+};
+
+const transformToString = (value: string | number | boolean | undefined) => {
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return value.toString();
+  }
+
+  return value ?? '';
+};
+
 @Component({
-    selector: 'ngx-unified-diff',
-    imports: [NgClass, LineNumberPipe],
-    templateUrl: './unified-diff.component.html',
-    styleUrl: './unified-diff.component.scss'
+  selector: 'ngx-unified-diff',
+  imports: [NgClass, LineNumberPipe],
+  templateUrl: './unified-diff.component.html',
+  styleUrl: './unified-diff.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UnifiedDiffComponent implements OnInit, OnChanges {
+export class UnifiedDiffComponent {
   private readonly dmp = inject(DiffMatchPatchService);
 
   /**
    * Optional title to be displayed at the top of the diff.
    */
-  @Input({ required: false })
-  public title?: string;
-  @Input({ required: true })
-  public before: string | number | boolean | undefined;
-  @Input({ required: true })
-  public after: string | number | boolean | undefined;
+  public readonly title = input<string>();
+  public readonly before = input.required<string | number | boolean | undefined>();
+  public readonly after = input.required<string | number | boolean | undefined>();
+
   /**
    * The number of lines of context to provide either side of a DiffOp.Insert or DiffOp.Delete diff.
    * Context is taken from a DiffOp.Equal section.
    */
-  @Input({ required: false })
-  public lineContextSize?: number;
+  public readonly lineContextSize = input<number>();
 
-  @Output()
-  public selectedLineChange = new EventEmitter<LineSelectEvent>();
+  public readonly selectedLineChange = output<LineSelectEvent>();
 
-  public diffSummary = {
-    numLinesAdded: 0,
-    numLinesRemoved: 0,
-  };
-  public calculatedDiff: LineDiff[] = [];
   public selectedLine?: LineDiff;
-  public isContentEqual: boolean = false;
 
-  public ngOnInit(): void {
-    this.updateHtml();
-  }
+  public readonly isContentEqual = computed(() => this.lineDiffResult().isContentEqual);
+  public readonly calculatedDiff = signal<LineDiff[]>([]);
+  public readonly diffSummary = computed(() => this.lineDiffResult().diffSummary);
 
-  public ngOnChanges(): void {
-    this.updateHtml();
+  protected readonly beforeString = computed(() => transformToString(this.before()));
+  protected readonly afterString = computed(() => transformToString(this.after()));
+
+  protected readonly diffs = computed(() => {
+    return this.dmp.computeLineDiff(this.beforeString(), this.afterString());
+  });
+
+  private readonly lineDiffResult = computed(() => {
+    return UnifiedDiffComponent.calculateLineDiff(this.diffs(), this.lineContextSize());
+  });
+
+  public constructor() {
+    effect(() => {
+      this.calculatedDiff.set(this.lineDiffResult().calculatedDiff);
+    });
   }
 
   public selectLine(index: number, lineDiff: LineDiff): void {
@@ -82,25 +112,33 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
   }
 
   private expandPlaceholder(index: number, placeholder: LineDiff): void {
-    const replacementLines = this.getPlaceholderReplacementLines(placeholder);
-    this.calculatedDiff.splice(index, 1, ...replacementLines);
+    const replacementLines = UnifiedDiffComponent.getPlaceholderReplacementLines(
+      placeholder,
+      this.lineContextSize(),
+    );
+
+    this.calculatedDiff.update((calculatedDiff) => {
+      const newDiff = [...calculatedDiff];
+      newDiff.splice(index, 1, ...replacementLines);
+      return newDiff;
+    });
   }
 
-  private getPlaceholderReplacementLines(placeholder: LineDiff): LineDiff[] {
+  private static getPlaceholderReplacementLines(
+    placeholder: LineDiff,
+    lineContextSize: number | undefined,
+  ): LineDiff[] {
     const skippedLines = placeholder.args?.skippedLines ?? [];
     const lineInOldText = placeholder.args?.lineInOldText ?? 0;
     const lineInNewText = placeholder.args?.lineInNewText ?? 0;
 
-    if (this.lineContextSize && skippedLines.length > 2 * this.lineContextSize) {
-      const prefix = skippedLines.slice(0, this.lineContextSize);
+    if (lineContextSize && skippedLines.length > 2 * lineContextSize) {
+      const prefix = skippedLines.slice(0, lineContextSize);
       const remainingSkippedLines = skippedLines.slice(
-        this.lineContextSize,
-        skippedLines.length - this.lineContextSize,
+        lineContextSize,
+        skippedLines.length - lineContextSize,
       );
-      const suffix = skippedLines.slice(
-        skippedLines.length - this.lineContextSize,
-        skippedLines.length,
-      );
+      const suffix = skippedLines.slice(skippedLines.length - lineContextSize, skippedLines.length);
 
       const prefixLines = this.createLineDiffs(prefix, lineInOldText, lineInNewText);
 
@@ -132,7 +170,7 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
     return this.createLineDiffs(skippedLines, lineInOldText, lineInNewText);
   }
 
-  private createLineDiffs(
+  private static createLineDiffs(
     lines: string[],
     startLineInOldText: number,
     startLineInNewText: number,
@@ -159,31 +197,27 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
     return linesToInsert;
   }
 
-  private updateHtml(): void {
-    if (typeof this.before === 'number' || typeof this.before === 'boolean') {
-      this.before = this.before.toString();
-    }
-    if (typeof this.after === 'number' || typeof this.after === 'boolean') {
-      this.after = this.after.toString();
-    }
-    this.calculateLineDiff(this.dmp.computeLineDiff(this.before ?? '', this.after ?? ''));
-  }
-
-  private calculateLineDiff(diffs: Diff[]): void {
+  private static calculateLineDiff(
+    diffs: Diff[],
+    lineContextSize: number | undefined,
+  ): LineDiffResult {
     const diffCalculation: IDiffCalculation = {
       lineInNewText: 1,
       lineInOldText: 1,
       lines: [],
     };
 
-    this.isContentEqual = diffs.length === 1 && diffs[0][0] === DiffOp.Equal;
-    if (this.isContentEqual) {
-      this.calculatedDiff = [];
-      this.diffSummary = {
-        numLinesAdded: 0,
-        numLinesRemoved: 0,
+    const isContentEqual = diffs.length === 1 && diffs[0][0] === DiffOp.Equal;
+
+    if (isContentEqual) {
+      return {
+        isContentEqual,
+        calculatedDiff: [],
+        diffSummary: {
+          numLinesAdded: 0,
+          numLinesRemoved: 0,
+        },
       };
-      return;
     }
 
     for (let i = 0; i < diffs.length; i++) {
@@ -200,7 +234,13 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
         case DiffOp.Equal: {
           const isFirstDiff = i === 0;
           const isLastDiff = i === diffs.length - 1;
-          this.outputEqualDiff(diffLines, diffCalculation, isFirstDiff, isLastDiff);
+          this.outputEqualDiff(
+            diffLines,
+            diffCalculation,
+            isFirstDiff,
+            isLastDiff,
+            lineContextSize,
+          );
           break;
         }
         case DiffOp.Delete: {
@@ -214,7 +254,7 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
       }
     }
 
-    this.calculatedDiff = diffCalculation.lines.map(
+    const calculatedDiff = diffCalculation.lines.map(
       ({ id, type, lineNumberInOldText, lineNumberInNewText, line, args }) => {
         return {
           id,
@@ -228,9 +268,13 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
       },
     );
 
-    this.diffSummary = {
-      numLinesAdded: this.calculatedDiff.filter((x) => x.type === LineDiffType.Insert).length,
-      numLinesRemoved: this.calculatedDiff.filter((x) => x.type === LineDiffType.Delete).length,
+    return {
+      isContentEqual,
+      calculatedDiff,
+      diffSummary: {
+        numLinesAdded: calculatedDiff.filter((x) => x.type === LineDiffType.Insert).length,
+        numLinesRemoved: calculatedDiff.filter((x) => x.type === LineDiffType.Delete).length,
+      },
     };
   }
 
@@ -248,30 +292,28 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
    * A document cannot consist of a single Diff with DiffOp.Equal and reach this function because
    * in this case the calculateLineDiff method returns early.
    */
-  private outputEqualDiff(
+  private static outputEqualDiff(
     diffLines: string[],
     diffCalculation: IDiffCalculation,
     isFirstDiff: boolean,
     isLastDiff: boolean,
+    lineContextSize: number | undefined,
   ): void {
-    if (this.lineContextSize && diffLines.length > this.lineContextSize) {
+    if (lineContextSize && diffLines.length > lineContextSize) {
       if (isFirstDiff) {
         // Take the last 'lineContextSize' lines from the first diff
-        const lineIncrement = diffLines.length - this.lineContextSize;
+        const lineIncrement = diffLines.length - lineContextSize;
         diffCalculation.lineInOldText += lineIncrement;
         diffCalculation.lineInNewText += lineIncrement;
-        diffLines = diffLines.slice(diffLines.length - this.lineContextSize, diffLines.length);
+        diffLines = diffLines.slice(diffLines.length - lineContextSize, diffLines.length);
       } else if (isLastDiff) {
         // Take only the first 'lineContextSize' lines from the final diff
-        diffLines = diffLines.slice(0, this.lineContextSize);
-      } else if (diffLines.length > 2 * this.lineContextSize) {
+        diffLines = diffLines.slice(0, lineContextSize);
+      } else if (diffLines.length > 2 * lineContextSize) {
         // Take the first 'lineContextSize' lines from this diff to provide context for the last diff
-        this.outputEqualDiffLines(diffLines.slice(0, this.lineContextSize), diffCalculation);
+        this.outputEqualDiffLines(diffLines.slice(0, lineContextSize), diffCalculation);
 
-        const skippedLines = diffLines.slice(
-          this.lineContextSize,
-          diffLines.length - this.lineContextSize,
-        );
+        const skippedLines = diffLines.slice(lineContextSize, diffLines.length - lineContextSize);
 
         // Output a special line indicating that some content is equal and has been skipped
         diffCalculation.lines.push({
@@ -286,13 +328,13 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
             lineInNewText: diffCalculation.lineInNewText,
           },
         });
-        const numberOfSkippedLines = diffLines.length - 2 * this.lineContextSize;
+        const numberOfSkippedLines = diffLines.length - 2 * lineContextSize;
         diffCalculation.lineInOldText += numberOfSkippedLines;
         diffCalculation.lineInNewText += numberOfSkippedLines;
 
         // Take the last 'lineContextSize' lines from this diff to provide context for the next diff
         this.outputEqualDiffLines(
-          diffLines.slice(diffLines.length - this.lineContextSize),
+          diffLines.slice(diffLines.length - lineContextSize),
           diffCalculation,
         );
         // This if branch has already output the diff lines so we return early to avoid outputting the lines
@@ -303,7 +345,10 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
     this.outputEqualDiffLines(diffLines, diffCalculation);
   }
 
-  private outputEqualDiffLines(diffLines: string[], diffCalculation: IDiffCalculation): void {
+  private static outputEqualDiffLines(
+    diffLines: string[],
+    diffCalculation: IDiffCalculation,
+  ): void {
     for (const line of diffLines) {
       diffCalculation.lines.push({
         id: `eql-${diffCalculation.lineInOldText}-${diffCalculation.lineInNewText}`,
@@ -317,7 +362,7 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
     }
   }
 
-  private outputDeleteDiff(diffLines: string[], diffCalculation: IDiffCalculation): void {
+  private static outputDeleteDiff(diffLines: string[], diffCalculation: IDiffCalculation): void {
     for (const line of diffLines) {
       diffCalculation.lines.push({
         id: `del-${diffCalculation.lineInOldText}`,
@@ -330,7 +375,7 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
     }
   }
 
-  private outputInsertDiff(diffLines: string[], diffCalculation: IDiffCalculation): void {
+  private static outputInsertDiff(diffLines: string[], diffCalculation: IDiffCalculation): void {
     for (const line of diffLines) {
       diffCalculation.lines.push({
         id: `ins-${diffCalculation.lineInNewText}`,
@@ -343,7 +388,7 @@ export class UnifiedDiffComponent implements OnInit, OnChanges {
     }
   }
 
-  private getCssClass(type: LineDiffType): string {
+  private static getCssClass(type: LineDiffType): string {
     switch (type) {
       case LineDiffType.Placeholder:
       case LineDiffType.Equal:

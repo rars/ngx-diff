@@ -1,22 +1,22 @@
 <div class="sbs-diff-title-bar">
-  @if (title) {
-    <span>{{ title }}</span
+  @if (title()) {
+    <span>{{ title() }}</span
     >&nbsp;
   }
-  <span class="sbs-diff-summary-lines-added">+++ {{ diffSummary.numLinesAdded }}</span
+  <span class="sbs-diff-summary-lines-added">+++ {{ diffSummary().numLinesAdded }}</span
   >&nbsp;
-  <span class="sbs-diff-summary-lines-removed">--- {{ diffSummary.numLinesRemoved }}</span>
+  <span class="sbs-diff-summary-lines-removed">--- {{ diffSummary().numLinesRemoved }}</span>
 </div>
-@if (isContentEqual) {
+@if (isContentEqual()) {
   <div class="sbs-diff">
     <div class="sbs-diff-no-changes-text">There are no changes to display.</div>
   </div>
 }
-@if (!isContentEqual) {
+@if (!isContentEqual()) {
   <div class="sbs-diff">
     <!-- before -->
     <div class="sbs-diff-margin">
-      @for (lineDiff of beforeLines; track lineDiff.id; let idx = $index) {
+      @for (lineDiff of beforeLines(); track lineDiff.id; let idx = $index) {
         <div
           class="line-selector"
           [ngClass]="
@@ -31,7 +31,7 @@
     </div>
     <div class="sbs-diff-content">
       <div class="sbs-diff-content-wrapper">
-        @for (lineDiff of beforeLines; track lineDiff.id; let idx = $index) {
+        @for (lineDiff of beforeLines(); track lineDiff.id; let idx = $index) {
           <div
             class="line-content"
             [ngClass]="
@@ -46,7 +46,7 @@
     </div>
     <!-- after -->
     <div class="sbs-diff-margin">
-      @for (lineDiff of afterLines; track lineDiff.id; let idx = $index) {
+      @for (lineDiff of afterLines(); track lineDiff.id; let idx = $index) {
         <div
           class="line-selector"
           [ngClass]="
@@ -61,7 +61,7 @@
     </div>
     <div class="sbs-diff-content">
       <div class="sbs-diff-content-wrapper">
-        @for (lineDiff of afterLines; track lineDiff.id; let idx = $index) {
+        @for (lineDiff of afterLines(); track lineDiff.id; let idx = $index) {
           <div
             class="line-content"
             [ngClass]="

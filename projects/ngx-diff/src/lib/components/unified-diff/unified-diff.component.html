@@ -1,21 +1,21 @@
 <div class="ufd-diff-title-bar">
-  @if (title) {
-    <span>{{ title }}</span
+  @if (title()) {
+    <span>{{ title() }}</span
     >&nbsp;
   }
-  <span class="ufd-diff-summary-lines-added">+++ {{ diffSummary.numLinesAdded }}</span
+  <span class="ufd-diff-summary-lines-added">+++ {{ diffSummary().numLinesAdded }}</span
   >&nbsp;
-  <span class="ufd-diff-summary-lines-removed">--- {{ diffSummary.numLinesRemoved }}</span>
+  <span class="ufd-diff-summary-lines-removed">--- {{ diffSummary().numLinesRemoved }}</span>
 </div>
-@if (isContentEqual) {
+@if (isContentEqual()) {
   <div class="ufd-diff">
     <div class="ufd-diff-no-changes-text">There are no changes to display.</div>
   </div>
 }
-@if (!isContentEqual) {
+@if (!isContentEqual()) {
   <div class="ufd-diff">
     <div class="ufd-diff-margin">
-      @for (lineDiff of calculatedDiff; track lineDiff.id; let idx = $index) {
+      @for (lineDiff of calculatedDiff(); track lineDiff.id; let idx = $index) {
         <div
           class="line-selector"
           [ngClass]="
@@ -31,7 +31,7 @@
     </div>
     <div class="ufd-diff-content">
       <div class="ufd-diff-content-wrapper">
-        @for (lineDiff of calculatedDiff; track lineDiff.id) {
+        @for (lineDiff of calculatedDiff(); track lineDiff.id) {
           <div
             class="line-content"
             [ngClass]="

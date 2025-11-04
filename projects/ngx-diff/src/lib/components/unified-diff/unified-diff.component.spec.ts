@@ -32,6 +32,8 @@ describe('UnifiedDiffComponent', () => {
 
     fixture = TestBed.createComponent(UnifiedDiffComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('before', 'a');
+    fixture.componentRef.setInput('after', 'b');
     fixture.detectChanges();
   });
 
@@ -40,19 +42,19 @@ describe('UnifiedDiffComponent', () => {
   });
 
   it('should have 8 line diffs', () => {
-    expect(component.calculatedDiff.length).toBe(8);
+    expect(component.calculatedDiff().length).toBe(8);
   });
 
   it('should have correct line numbers', () => {
-    const leftLineNumbers = component.calculatedDiff.map((x) => x.lineNumberInOldText);
+    const leftLineNumbers = component.calculatedDiff().map((x) => x.lineNumberInOldText);
     expect(leftLineNumbers).toEqual([1, 2, null, null, 3, 4, 5, 6]);
 
-    const rightLineNumbers = component.calculatedDiff.map((x) => x.lineNumberInNewText);
+    const rightLineNumbers = component.calculatedDiff().map((x) => x.lineNumberInNewText);
     expect(rightLineNumbers).toEqual([1, 2, 3, 4, null, null, 5, 6]);
   });
 
   it('should have correct class annotations', () => {
-    const classes = component.calculatedDiff.map((x) => x.type);
+    const classes = component.calculatedDiff().map((x) => x.type);
     expect(classes).toEqual([
       LineDiffType.Equal,
       LineDiffType.Equal,
@@ -66,7 +68,7 @@ describe('UnifiedDiffComponent', () => {
   });
 
   it('should have correct line contents', () => {
-    const contents = component.calculatedDiff.map((x) => x.line);
+    const contents = component.calculatedDiff().map((x) => x.line);
     expect(contents).toEqual([
       'Diff One A',
       'Diff One B',
