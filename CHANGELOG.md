@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [12.0.0](https://github.com/rars/ngx-diff/compare/v11.0.0...v12.0.0) (2025-11-04)
+
+
+### Features
+
+* **ngx-diff:** switch to use Angular signals, enabling use in zoneless apps ([68b58b3](https://github.com/rars/ngx-diff/commit/68b58b33776b74d34583d807abc25ad36003ec43))
+
 ## [11.0.0](https://github.com/rars/ngx-diff/compare/v10.0.0...v11.0.0) (2025-06-06)
 
 
