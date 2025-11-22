@@ -16,7 +16,6 @@
               "base": "dist/ngx-diff-demo"
             },
             "index": "src/index.html",
-            "polyfills": ["src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": ["src/styles.scss"],
@@ -52,6 +51,11 @@
                   "maximumError": "10kb"
                 }
               ]
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
           },
           "defaultConfiguration": ""
@@ -74,16 +78,7 @@
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
-          "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.scss"],
-            "scripts": []
-          }
+          "builder": "@angular/build:unit-test"
         }
       }
     },
@@ -102,15 +97,16 @@
           "configurations": {
             "production": {
               "tsConfig": "projects/ngx-diff/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngx-diff/tsconfig.lib.json"
             }
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "main": "projects/ngx-diff/src/test.ts",
-            "tsConfig": "projects/ngx-diff/tsconfig.spec.json",
-            "karmaConfig": "projects/ngx-diff/karma.conf.js"
+            "tsConfig": "projects/ngx-diff/tsconfig.spec.json"
           }
         },
         "lint": {
