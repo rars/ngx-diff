@@ -20,10 +20,6 @@
     "typeRoots": [
       "node_modules/@types"
     ],
-    "lib": [
-      "es2018",
-      "dom"
-    ],
     "paths": {
       "ngx-diff": [
         "dist/ngx-diff/ngx-diff",
