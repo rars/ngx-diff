@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.0.0](https://github.com/rars/ngx-diff/compare/v12.0.0...v13.0.0) (2025-11-23)
+
+
+### Features
+
+* **ngx-diff:** update to Angular 21 ([188218f](https://github.com/rars/ngx-diff/commit/188218fb4c6eb20b9f6c0d66d3f65650d387d1a6))
+
 ## [12.0.0](https://github.com/rars/ngx-diff/compare/v11.0.0...v12.0.0) (2025-11-04)
 
 
