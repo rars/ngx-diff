@@ -18,24 +18,23 @@ import { UnifiedDiffComponent, SideBySideDiffComponent } from 'ngx-diff';
 import { ThemeService } from './services/theme/theme.service';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    RouterOutlet,
-    NgClass,
-    FormsModule,
-    UnifiedDiffComponent,
-    SideBySideDiffComponent,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatInputModule,
-    MatToolbarModule,
-    MatTooltipModule,
-    FontAwesomeModule,
-  ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+    selector: 'app-root',
+    imports: [
+        RouterOutlet,
+        NgClass,
+        FormsModule,
+        UnifiedDiffComponent,
+        SideBySideDiffComponent,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatInputModule,
+        MatToolbarModule,
+        MatTooltipModule,
+        FontAwesomeModule,
+    ],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent {
   public isDarkMode = false;
