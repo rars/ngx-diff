@@ -5,13 +5,14 @@
   --ngx-diff-font-family: Consolas, Courier, monospace;
   --ngx-diff-font-color: #000;
   --ngx-diff-line-number-font-color: #aaaaaa;
-  --ngx-diff-line-number-hover-font-color:  #484848;
+  --ngx-diff-line-number-hover-font-color: #484848;
 
   --ngx-diff-selected-border-width: 0;
   --ngx-diff-selected-border-color: #000;
   --ngx-diff-selected-line-background-color: #d6f1ff;
 
   --ngx-diff-line-number-width: 2rem;
+  --ngx-diff-line-number-width-dynamic-padding: 1rem;
   --ngx-diff-border-width: 1px;
   --ngx-diff-line-left-padding: 1rem;
   --ngx-diff-bottom-spacer-height: 1rem;

@@ -1,11 +1,16 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
   effect,
+  ElementRef,
   inject,
+  Injector,
   input,
   output,
+  Renderer2,
+  RendererStyleFlags2,
   signal,
 } from '@angular/core';
 import { Diff, DiffOp } from 'diff-match-patch-ts';
@@ -15,6 +20,7 @@ import { LineNumberPipe } from '../../pipes/line-number/line-number.pipe';
 import { LineDiffType } from '../../common/line-diff-type';
 import { NgClass } from '@angular/common';
 import { LineSelectEvent } from '../../common/line-select-event';
+import { StyleCalculatorService } from '../../services/style-calculator/style-calculator.service';
 
 interface IDiffCalculation {
   beforeLineNumber: number;
@@ -59,13 +65,24 @@ const transformToString = (value: string | number | boolean | undefined) => {
   styleUrl: './side-by-side-diff.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SideBySideDiffComponent {
+export class SideBySideDiffComponent implements AfterViewInit {
   private readonly dmp = inject(DiffMatchPatchService);
+  private readonly styleCalculator = inject(StyleCalculatorService);
+  private readonly elementRef = inject(ElementRef);
+  private readonly renderer = inject(Renderer2);
+  private readonly injector = inject(Injector);
 
   /**
+   * @description
    * Optional title to be displayed at the top of the diff.
    */
   public readonly title = input<string>();
+  /**
+   * @description
+   * Controls whether the width necessary for the line number is
+   * calculated dynamically based upon the number of lines in the diff.
+   */
+  public readonly isDynamicLineNumberWidthEnabled = input<boolean>(false);
   public readonly before = input.required<string | number | boolean | undefined>();
   public readonly after = input.required<string | number | boolean | undefined>();
 
@@ -103,6 +120,38 @@ export class SideBySideDiffComponent {
     effect(() => {
       this.afterLines.set(this.lineDiffResult().afterLines);
     });
+  }
+
+  public ngAfterViewInit(): void {
+    effect(
+      () => {
+        if (!this.isDynamicLineNumberWidthEnabled()) {
+          return;
+        }
+
+        const lineDiffResult = this.lineDiffResult();
+
+        let maxLineNumber = lineDiffResult.beforeLines.reduce(
+          (maxSoFar, entry) => Math.max(maxSoFar, entry.lineNumber ?? 0),
+          0,
+        );
+
+        maxLineNumber = lineDiffResult.afterLines.reduce(
+          (maxSoFar, entry) => Math.max(maxSoFar, entry.lineNumber ?? 0),
+          maxLineNumber,
+        );
+
+        const newWidth = this.styleCalculator.getLineNumberWidth(maxLineNumber);
+
+        this.renderer.setStyle(
+          this.elementRef.nativeElement,
+          '--ngx-diff-line-number-width',
+          newWidth,
+          RendererStyleFlags2.DashCase,
+        );
+      },
+      { injector: this.injector },
+    );
   }
 
   public selectLine(index: number): void {

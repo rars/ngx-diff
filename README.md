@@ -96,6 +96,7 @@ To create your own theme, override the relevant CSS variables; for example, in y
   --ngx-diff-selected-line-background-color: #d6f1ff;
 
   --ngx-diff-line-number-width: 2rem;
+  --ngx-diff-line-number-width-dynamic-padding: 1rem;
   --ngx-diff-border-width: 1px;
   --ngx-diff-line-left-padding: 1rem;
   --ngx-diff-bottom-spacer-height: 1rem;
@@ -120,6 +121,7 @@ Then use this class in your desired component in your HTML template:
   [before]="oldText"
   [after]="newText"
   [lineContextSize]="4"
+  [isDynamicLineNumberWidthEnabled]="true"
   style="width: 100%"
   (selectedLineChange)="selectedLineChange($event)" />
 ```
@@ -142,6 +144,7 @@ It is recommended to use these settings rather than attempt to override styles b
 | 18              | 9.0.0+           |
 | 19              | 10.0.0+          |
 | 20              | 11.0.0+          |
+| 21              | 13.0.0+          |
 
 ## Contributions welcome!
 

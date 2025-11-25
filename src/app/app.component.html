@@ -4,12 +4,13 @@
 <div>
   <textarea [(ngModel)]="newText"></textarea>
 </div>
+<button type="button" (click)="loadNextExample()">Next Example</button>
 
 <div class="ngx-diff-light-theme">
   <inline-diff
     class="my-inline-diff-theme"
-    [oldText]="oldText"
-    [newText]="newText"
+    [oldText]="oldText()"
+    [newText]="newText()"
     [lineContextSize]="4"
     style="width: 100%"
     (selectedLineChange)="selectedLineChange($event)"
@@ -18,45 +19,49 @@
   <inline-diff
     class="ngx-diff-dark-theme"
     title="github/user/src/main.ts"
-    [oldText]="oldText"
-    [newText]="newText"
+    [oldText]="oldText()"
+    [newText]="newText()"
     [lineContextSize]="4"
     style="width: 100%"
     (selectedLineChange)="selectedLineChange($event)"
   />
   <br />
   <inline-diff
-    [oldText]="oldText"
-    [newText]="oldText"
+    [oldText]="oldText()"
+    [newText]="oldText()"
     [lineContextSize]="4"
     style="width: 100%"
     (selectedLineChange)="selectedLineChange($event)"
   />
   <br />
-  <inline-diff
-    title="github/user/src/main.ts"
-    [oldText]="oldText"
-    [newText]="newText"
+  <ngx-unified-diff
+    [title]="title()"
+    [before]="oldText()"
+    [after]="newText()"
     [lineContextSize]="4"
-    style="width: 100%"
-    (selectedLineChange)="selectedLineChange($event)"
-  />
-  <br />
-  <ngx-side-by-side-diff
-    title="github/user/src/main.ts"
-    [before]="oldText"
-    [after]="newText"
-    [lineContextSize]="4"
+    [isDynamicLineNumberWidthEnabled]="true"
     style="width: 100%"
     (selectedLineChange)="selectedLineChange($event)"
   />
   <br />
   <ngx-side-by-side-diff
-    title="github/user/src/main.ts"
+    class="my-side-by-side-theme"
+    [title]="title()"
+    [before]="oldText()"
+    [after]="newText()"
+    [lineContextSize]="4"
+    [isDynamicLineNumberWidthEnabled]="true"
+    style="width: 100%"
+    (selectedLineChange)="selectedLineChange($event)"
+  />
+  <br />
+  <ngx-side-by-side-diff
+    [title]="title()"
     class="ngx-diff-dark-theme"
-    [before]="oldText"
-    [after]="newText"
+    [before]="oldText()"
+    [after]="newText()"
     [lineContextSize]="4"
+    [isDynamicLineNumberWidthEnabled]="true"
     style="width: 100%"
     (selectedLineChange)="selectedLineChange($event)"
   />
