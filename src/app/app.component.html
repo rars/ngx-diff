@@ -19,7 +19,7 @@
         (click)="toggleDarkMode()"
         matTooltip="Toggle between light and dark mode"
       >
-        <mat-icon>{{ isDarkMode ? "light_mode" : "dark_mode" }}</mat-icon>
+        <mat-icon>{{ isDarkMode() ? "light_mode" : "dark_mode" }}</mat-icon>
       </button>
     </div>
   </mat-toolbar>
@@ -66,13 +66,13 @@
                   <ngx-unified-diff
                     class="w-full my-custom-diff-theme"
                     [ngClass]="
-                      isDarkMode
+                      isDarkMode()
                         ? ['ngx-diff-dark-theme']
                         : ['ngx-diff-light-theme']
                     "
                     title="github.com/rars/ngx-diff/fruitlist.txt"
-                    [before]="oldText"
-                    [after]="newText"
+                    [before]="oldText()"
+                    [after]="newText()"
                     [lineContextSize]="4"
                   >
                   </ngx-unified-diff>
@@ -87,13 +87,13 @@
                   <ngx-side-by-side-diff
                     class="w-full my-custom-diff-theme"
                     [ngClass]="
-                      isDarkMode
+                      isDarkMode()
                         ? ['ngx-diff-dark-theme']
                         : ['ngx-diff-light-theme']
                     "
                     title="github.com/rars/ngx-diff/fruitlist.txt"
-                    [before]="oldText"
-                    [after]="newText"
+                    [before]="oldText()"
+                    [after]="newText()"
                     [lineContextSize]="4"
                   >
                   </ngx-side-by-side-diff>
