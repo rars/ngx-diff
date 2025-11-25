@@ -20,60 +20,27 @@ body {
 @tailwind components;
 @tailwind utilities;
 
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 
 $scale: -1;
 
-// Define a dark theme
-$dark-theme: mat.define-theme(
-  (
-    color: (
-      theme-type: dark,
-      primary: mat.$violet-palette,
-    ),
-    density: (
-      scale: $scale,
-    ),
-  )
-);
-
-// Define a light theme
-$light-theme: mat.define-theme(
-  (
-    color: (
-      theme-type: light,
-      primary: mat.$violet-palette,
-    ),
-    density: (
-      scale: $scale,
-    ),
-  )
-);
-
 html {
-  // Apply the dark theme by default
-  @include mat.core-theme($light-theme);
-  @include mat.button-theme($light-theme);
-  @include mat.card-theme($light-theme);
-  @include mat.form-field-theme($light-theme);
-  @include mat.icon-theme($light-theme);
-  @include mat.icon-button-theme($light-theme);
-  @include mat.input-theme($light-theme);
-  @include mat.toolbar-theme($light-theme);
-  @include mat.tooltip-theme($light-theme);
+  // Apply the light theme by default
+  color-scheme: light;
 
-  // Apply the light theme only when the user prefers light themes.
+  @include mat.theme(
+    (
+      color: mat.$violet-palette,
+      density: $scale,
+    )
+  );
+
+  // Apply the dark theme only when the user prefers dark themes.
   .dark-theme {
-    // Use the `-color` mixins to only apply color styles without reapplying the same
-    // typography and density styles.
-    @include mat.core-color($dark-theme);
-    @include mat.button-color($dark-theme);
-    @include mat.card-color($dark-theme);
-    @include mat.form-field-color($dark-theme);
-    @include mat.icon-color($dark-theme);
-    @include mat.icon-button-color($dark-theme);
-    @include mat.input-color($dark-theme);
-    @include mat.toolbar-color($dark-theme);
-    @include mat.tooltip-color($dark-theme);
+    color-scheme: dark;
   }
 }
+
+@include mat.elevation-classes();
+@include mat.app-background();

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
@@ -19,7 +19,6 @@ import { ThemeService } from './services/theme/theme.service';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [
     RouterOutlet,
     NgClass,
@@ -36,22 +35,25 @@ import { ThemeService } from './services/theme/theme.service';
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
-  public isDarkMode = false;
-  public oldText = 'apples\noranges\nkiwis\nstrawberries\n';
-  public newText = 'apples\npears\nkiwis\ngrapefruit\nstrawberries\n';
+  public readonly isDarkMode = signal(false);
+  public readonly oldText = signal('apples\noranges\nkiwis\nstrawberries\n');
+  public readonly newText = signal(
+    'apples\npears\nkiwis\ngrapefruit\nstrawberries\n',
+  );
 
   public constructor(
     faLibrary: FaIconLibrary,
     private readonly themeService: ThemeService,
   ) {
     faLibrary.addIcons(faGithub, faNpm);
-    this.isDarkMode = this.themeService.isDarkMode();
+    this.isDarkMode.set(this.themeService.isDarkMode());
   }
 
   protected toggleDarkMode(): void {
     this.themeService.toggleDarkMode();
-    this.isDarkMode = this.themeService.isDarkMode();
+    this.isDarkMode.set(this.themeService.isDarkMode());
   }
 }
