@@ -11,8 +11,7 @@
   <div class="ufd-diff">
     <div class="ufd-diff-no-changes-text">There are no changes to display.</div>
   </div>
-}
-@if (!isContentEqual()) {
+} @else {
   <div class="ufd-diff">
     <div class="ufd-diff-margin">
       @for (lineDiff of calculatedDiff(); track lineDiff.id; let idx = $index) {

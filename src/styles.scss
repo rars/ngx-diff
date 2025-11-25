@@ -7,7 +7,7 @@
   --ngx-diff-selected-border-color: blue;
   --ngx-diff-font-family: Consolas;
   --ngx-diff-line-number-hover-font-color: white;
-  --ngx-diff-line-number-width: 2rem;
+  --ngx-diff-line-number-width: 4rem;
   --ngx-diff-font-size: 1rem;
   --ngx-diff-line-left-padding: 1rem;
   --ngx-diff-bottom-spacer-height: 1rem;
@@ -16,4 +16,8 @@
   --ngx-diff-insert-color-darkest: color-mix(in srgb, var(--ngx-diff-insert-color), #000 30%);
   --ngx-diff-delete-color-darker: color-mix(in srgb, var(--ngx-diff-delete-color), #000 15%);
   --ngx-diff-delete-color-darkest: color-mix(in srgb, var(--ngx-diff-delete-color), #000 30%);
+}
+
+:root .my-side-by-side-theme {
+  --ngx-diff-line-number-width-dynamic-padding: 2rem;
 }

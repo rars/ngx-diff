@@ -1,13 +1,18 @@
 import { Diff, DiffOp } from 'diff-match-patch-ts';
 
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
   effect,
+  ElementRef,
   inject,
+  Injector,
   input,
   output,
+  Renderer2,
+  RendererStyleFlags2,
   signal,
 } from '@angular/core';
 
@@ -17,6 +22,7 @@ import { LineSelectEvent } from '../../common/line-select-event';
 import { DiffMatchPatchService } from '../../services/diff-match-patch/diff-match-patch.service';
 import { LineNumberPipe } from '../../pipes/line-number/line-number.pipe';
 import { NgClass } from '@angular/common';
+import { StyleCalculatorService } from '../../services/style-calculator/style-calculator.service';
 
 type LineDiff = {
   id: string;
@@ -52,13 +58,24 @@ const transformToString = (value: string | number | boolean | undefined) => {
   styleUrl: './unified-diff.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UnifiedDiffComponent {
+export class UnifiedDiffComponent implements AfterViewInit {
   private readonly dmp = inject(DiffMatchPatchService);
+  private readonly styleCalculator = inject(StyleCalculatorService);
+  private readonly elementRef = inject(ElementRef);
+  private readonly renderer = inject(Renderer2);
+  private readonly injector = inject(Injector);
 
   /**
+   * @description
    * Optional title to be displayed at the top of the diff.
    */
   public readonly title = input<string>();
+  /**
+   * @description
+   * Controls whether the width necessary for the line number is
+   * calculated dynamically based upon the number of lines in the diff.
+   */
+  public readonly isDynamicLineNumberWidthEnabled = input<boolean>(false);
   public readonly before = input.required<string | number | boolean | undefined>();
   public readonly after = input.required<string | number | boolean | undefined>();
 
@@ -91,6 +108,35 @@ export class UnifiedDiffComponent {
     effect(() => {
       this.calculatedDiff.set(this.lineDiffResult().calculatedDiff);
     });
+  }
+
+  public ngAfterViewInit(): void {
+    effect(
+      () => {
+        if (!this.isDynamicLineNumberWidthEnabled()) {
+          return;
+        }
+
+        const maxLineNumber = this.lineDiffResult().calculatedDiff.reduce(
+          (maxLineNumber, entry) =>
+            Math.max(
+              maxLineNumber,
+              Math.max(entry.lineNumberInNewText ?? 0, entry.lineNumberInOldText ?? 0),
+            ),
+          0,
+        );
+
+        const newWidth = this.styleCalculator.getLineNumberWidth(maxLineNumber);
+
+        this.renderer.setStyle(
+          this.elementRef.nativeElement,
+          '--ngx-diff-line-number-width',
+          newWidth,
+          RendererStyleFlags2.DashCase,
+        );
+      },
+      { injector: this.injector },
+    );
   }
 
   public selectLine(index: number, lineDiff: LineDiff): void {
