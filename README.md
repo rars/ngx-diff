@@ -95,6 +95,9 @@ To create your own theme, override the relevant CSS variables; for example, in y
   --ngx-diff-selected-border-color: #000;
   --ngx-diff-selected-line-background-color: #d6f1ff;
 
+  --ngx-diff-progress-background-color: #dfdfdf;
+  --ngx-diff-progress-foreground-color: #aaaaaa;
+
   --ngx-diff-line-number-width: 2rem;
   --ngx-diff-line-number-width-dynamic-padding: 1rem;
   --ngx-diff-border-width: 1px;
@@ -127,6 +130,88 @@ Then use this class in your desired component in your HTML template:
 ```
 
 It is recommended to use these settings rather than attempt to override styles based upon DOM structure or class names that are internal details that may change.
+
+## Run diff in Web Worker
+
+**New in version 13.1.0**
+
+Very large diffs can take over 100ms to compute in Js. To avoid locking the UI main thread, you can configure this to run in a Web worker as follows:
+
+1. In your application create a new Web worker:
+
+```bash
+npx ng g web-worker web-workers/DiffWebWorker
+```
+
+2. In your newly created file `diff-web-worker.worker.ts`, add implementation that will compute the diff:
+
+```js
+/// <reference lib="webworker" />
+
+import { DiffMatchPatch } from 'diff-match-patch-ts';
+
+addEventListener('message', ({ data }) => {
+  try {
+    if (typeof data.before !== 'string' || typeof data.after !== 'string') {
+      throw new TypeError('Input data for diffing must be strings.');
+    }
+
+    const dmp = new DiffMatchPatch();
+    const diffs = dmp.diff_lineMode(data.before, data.after);
+
+    postMessage({ id: data.id, status: 'success', diffs });
+  } catch (error: any) {
+    postMessage({ id: data.id, status: 'error', error: { message: error.message, stack: error.stack } });
+  }
+});
+```
+
+3. Create a factory service that will create the Web worker:
+
+```bash
+npx ng g s services/diff-web-worker-factory/DiffWebWorkerFactory
+```
+
+And implement the `IDiffWebWorkerFactory` interface in the generated diff-web-worker-factory.service.ts:
+
+```js
+import { Injectable } from '@angular/core';
+import { IDiffWebWorkerFactory } from 'ngx-diff';
+
+@Injectable()
+export class DiffWebWorkerFactoryService implements IDiffWebWorkerFactory {
+  public createWorker(): Worker | undefined {
+    if (typeof Worker !== 'undefined') {
+      return new Worker(new URL('../../web-workers/diff-web-worker.worker', import.meta.url));
+    } else {
+      return undefined;
+    }
+  }
+}
+
+```
+
+4. Specify the factory service in your `main.ts` file:
+
+```js
+import { NGX_DIFF_WEB_WORKER_FACTORY } from 'ngx-diff';
+import { DiffWebWorkerFactoryService } from './app/services/diff-web-worker-factory/diff-web-worker-factory.service';
+
+if (environment.production) {
+  enableProdMode();
+}
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    importProvidersFrom(BrowserModule, AppRoutingModule),
+    provideZonelessChangeDetection(),
+    /* Add this line below: */
+    { provide: NGX_DIFF_WEB_WORKER_FACTORY, useClass: DiffWebWorkerFactoryService },
+  ],
+}).catch((err) => console.error(err));
+```
+
+Now `ngx-diff` will detect that you have a Web worker factory configured and use that to run the diff on a Web worker instead of the main UI thread.
 
 ## Version history
 

@@ -23,6 +23,9 @@ import { DiffMatchPatchService } from '../../services/diff-match-patch/diff-matc
 import { LineNumberPipe } from '../../pipes/line-number/line-number.pipe';
 import { NgClass } from '@angular/common';
 import { StyleCalculatorService } from '../../services/style-calculator/style-calculator.service';
+import { BehaviorSubject, debounceTime, startWith, switchMap } from 'rxjs';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { ProgressBarComponent } from '../progress-bar/progress-bar.component';
 
 type LineDiff = {
   id: string;
@@ -43,17 +46,11 @@ type LineDiffResult = {
   };
 };
 
-const transformToString = (value: string | number | boolean | undefined) => {
-  if (typeof value === 'number' || typeof value === 'boolean') {
-    return value.toString();
-  }
-
-  return value ?? '';
-};
+const transformToString = (value: string | number | boolean | undefined) => value?.toString() ?? '';
 
 @Component({
   selector: 'ngx-unified-diff',
-  imports: [NgClass, LineNumberPipe],
+  imports: [NgClass, LineNumberPipe, ProgressBarComponent],
   templateUrl: './unified-diff.component.html',
   styleUrl: './unified-diff.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,6 +76,12 @@ export class UnifiedDiffComponent implements AfterViewInit {
   public readonly before = input.required<string | number | boolean | undefined>();
   public readonly after = input.required<string | number | boolean | undefined>();
 
+  protected readonly diffData = computed(() => ({
+    title: this.title(),
+    before: transformToString(this.before()),
+    after: transformToString(this.after()),
+  }));
+
   /**
    * The number of lines of context to provide either side of a DiffOp.Insert or DiffOp.Delete diff.
    * Context is taken from a DiffOp.Equal section.
@@ -89,24 +92,38 @@ export class UnifiedDiffComponent implements AfterViewInit {
 
   public selectedLine?: LineDiff;
 
-  public readonly isContentEqual = computed(() => this.lineDiffResult().isContentEqual);
+  // This needs to be a signal, rather than computed(..) to support alterations when a placeholder is expanded.
   public readonly calculatedDiff = signal<LineDiff[]>([]);
-  public readonly diffSummary = computed(() => this.lineDiffResult().diffSummary);
 
-  protected readonly beforeString = computed(() => transformToString(this.before()));
-  protected readonly afterString = computed(() => transformToString(this.after()));
+  private readonly isCalculatingSubject = new BehaviorSubject<boolean>(false);
 
-  protected readonly diffs = computed(() => {
-    return this.dmp.computeLineDiff(this.beforeString(), this.afterString());
-  });
+  protected readonly isCalculating = toSignal(
+    this.isCalculatingSubject.asObservable().pipe(debounceTime(50)),
+  );
 
-  private readonly lineDiffResult = computed(() => {
-    return UnifiedDiffComponent.calculateLineDiff(this.diffs(), this.lineContextSize());
-  });
+  protected readonly diffs = toSignal(
+    toObservable(this.diffData).pipe(
+      takeUntilDestroyed(),
+      debounceTime(50),
+      switchMap(async ({ title, before, after }) => {
+        this.isCalculatingSubject.next(true);
+        const diffs = await this.dmp.computeLineDiff(before, after);
+        return { title, diffs };
+      }),
+      startWith({ title: undefined, diffs: [] }),
+    ),
+    { requireSync: true },
+  );
+
+  protected readonly processedDiff = computed(() => ({
+    ...UnifiedDiffComponent.calculateLineDiff(this.diffs().diffs, this.lineContextSize()),
+    title: this.diffs().title,
+  }));
 
   public constructor() {
     effect(() => {
-      this.calculatedDiff.set(this.lineDiffResult().calculatedDiff);
+      this.isCalculatingSubject.next(false);
+      this.calculatedDiff.set(this.processedDiff().calculatedDiff);
     });
   }
 
@@ -117,7 +134,7 @@ export class UnifiedDiffComponent implements AfterViewInit {
           return;
         }
 
-        const maxLineNumber = this.lineDiffResult().calculatedDiff.reduce(
+        const maxLineNumber = this.processedDiff().calculatedDiff.reduce(
           (maxLineNumber, entry) =>
             Math.max(
               maxLineNumber,

@@ -34,6 +34,7 @@
     (selectedLineChange)="selectedLineChange($event)"
   />
   <br />
+
   <ngx-unified-diff
     [title]="title()"
     [before]="oldText()"
@@ -43,6 +44,7 @@
     style="width: 100%"
     (selectedLineChange)="selectedLineChange($event)"
   />
+
   <br />
   <ngx-side-by-side-diff
     class="my-side-by-side-theme"
@@ -57,7 +59,6 @@
   <br />
   <ngx-side-by-side-diff
     [title]="title()"
-    class="ngx-diff-dark-theme"
     [before]="oldText()"
     [after]="newText()"
     [lineContextSize]="4"
