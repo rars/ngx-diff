@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.1.0](https://github.com/rars/ngx-diff/compare/v13.0.0...v13.1.0) (2025-11-28)
+
+
+### Features
+
+* **ngx-diff:** allow diff computation to run in Web worker for large diffs ([377b094](https://github.com/rars/ngx-diff/commit/377b094f2dd6f6d3bdc1d0ce5a3abb067496099d))
+* **ngx-diff:** allow line number width to be calculated dynamically (avoids overflow) ([a6e5078](https://github.com/rars/ngx-diff/commit/a6e50781eb15b741284a8bb498eacfc81e77faa3))
+
 ## [13.0.0](https://github.com/rars/ngx-diff/compare/v12.0.0...v13.0.0) (2025-11-23)
 
 

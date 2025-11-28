@@ -1,6 +1,6 @@
 {
   "name": "ngx-diff",
-  "version": "13.0.0",
+  "version": "13.1.0",
   "description": "An Angular component for viewing text diffs.",
   "peerDependencies": {
     "@angular/common": ">=21.0.0",
