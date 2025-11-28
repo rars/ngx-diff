@@ -21,6 +21,9 @@ import { LineDiffType } from '../../common/line-diff-type';
 import { NgClass } from '@angular/common';
 import { LineSelectEvent } from '../../common/line-select-event';
 import { StyleCalculatorService } from '../../services/style-calculator/style-calculator.service';
+import { BehaviorSubject, debounceTime, startWith, switchMap } from 'rxjs';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { ProgressBarComponent } from '../progress-bar/progress-bar.component';
 
 interface IDiffCalculation {
   beforeLineNumber: number;
@@ -50,17 +53,11 @@ type LineDiffResult = {
   };
 };
 
-const transformToString = (value: string | number | boolean | undefined) => {
-  if (typeof value === 'number' || typeof value === 'boolean') {
-    return value.toString();
-  }
-
-  return value ?? '';
-};
+const transformToString = (value: string | number | boolean | undefined) => value?.toString() ?? '';
 
 @Component({
   selector: 'ngx-side-by-side-diff',
-  imports: [NgClass, LineNumberPipe],
+  imports: [NgClass, LineNumberPipe, ProgressBarComponent],
   templateUrl: './side-by-side-diff.component.html',
   styleUrl: './side-by-side-diff.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -86,6 +83,12 @@ export class SideBySideDiffComponent implements AfterViewInit {
   public readonly before = input.required<string | number | boolean | undefined>();
   public readonly after = input.required<string | number | boolean | undefined>();
 
+  protected readonly diffData = computed(() => ({
+    title: this.title(),
+    before: transformToString(this.before()),
+    after: transformToString(this.after()),
+  }));
+
   /**
    * The number of lines of context to provide either side of a DiffOp.Insert or DiffOp.Delete diff.
    * Context is taken from a DiffOp.Equal section.
@@ -94,31 +97,43 @@ export class SideBySideDiffComponent implements AfterViewInit {
 
   public readonly selectedLineChange = output<LineSelectEvent>();
 
-  public readonly isContentEqual = computed(() => this.lineDiffResult().isContentEqual);
-  public readonly diffSummary = computed(() => this.lineDiffResult().diffSummary);
+  private readonly isCalculatingSubject = new BehaviorSubject(false);
+  public readonly isCalculating = toSignal(
+    this.isCalculatingSubject.asObservable().pipe(debounceTime(50)),
+  );
 
-  public readonly beforeLines = signal<ILine[]>([]); // computed(() => this.lineDiffResult().beforeLines);
-  public readonly afterLines = signal<ILine[]>([]); // computed(() => this.lineDiffResult().afterLines);
+  public readonly beforeLines = signal<ILine[]>([]);
+  public readonly afterLines = signal<ILine[]>([]);
 
   public selectedLineIndex?: number;
 
-  private readonly beforeText = computed(() => transformToString(this.before()));
-  private readonly afterText = computed(() => transformToString(this.after()));
+  private readonly lineDiffs = toSignal(
+    toObservable(this.diffData).pipe(
+      takeUntilDestroyed(),
+      debounceTime(50),
+      switchMap(async ({ title, before, after }) => {
+        this.isCalculatingSubject.next(true);
+        const diffs = await this.dmp.computeLineDiff(before, after);
+        return { title, diffs };
+      }),
+      startWith({ title: undefined, diffs: [] }),
+    ),
+    { requireSync: true },
+  );
 
-  private readonly lineDiffs = computed(() => {
-    return this.dmp.computeLineDiff(this.beforeText(), this.afterText());
-  });
-
-  private readonly lineDiffResult = computed(() => {
-    return this.calculateLineDiffs(this.lineDiffs());
-  });
+  public readonly processedDiff = computed(() => ({
+    ...this.calculateLineDiffs(this.lineDiffs().diffs),
+    title: this.lineDiffs().title,
+  }));
 
   public constructor() {
     effect(() => {
-      this.beforeLines.set(this.lineDiffResult().beforeLines);
-    });
-    effect(() => {
-      this.afterLines.set(this.lineDiffResult().afterLines);
+      this.isCalculatingSubject.next(false);
+
+      const { beforeLines, afterLines } = this.processedDiff();
+
+      this.beforeLines.set(beforeLines);
+      this.afterLines.set(afterLines);
     });
   }
 
@@ -129,14 +144,14 @@ export class SideBySideDiffComponent implements AfterViewInit {
           return;
         }
 
-        const lineDiffResult = this.lineDiffResult();
+        const { beforeLines, afterLines } = this.processedDiff();
 
-        let maxLineNumber = lineDiffResult.beforeLines.reduce(
+        let maxLineNumber = beforeLines.reduce(
           (maxSoFar, entry) => Math.max(maxSoFar, entry.lineNumber ?? 0),
           0,
         );
 
-        maxLineNumber = lineDiffResult.afterLines.reduce(
+        maxLineNumber = afterLines.reduce(
           (maxSoFar, entry) => Math.max(maxSoFar, entry.lineNumber ?? 0),
           maxLineNumber,
         );

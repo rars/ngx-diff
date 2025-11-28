@@ -1,6 +1,7 @@
 {
   "name": "ngx-diff",
   "version": "13.0.0",
+  "description": "An Angular component for viewing text diffs.",
   "peerDependencies": {
     "@angular/common": ">=21.0.0",
     "@angular/core": ">=21.0.0",
@@ -16,7 +17,14 @@
   "keywords": [
     "Angular",
     "ng",
-    "diff"
+    "ngx",
+    "diff",
+    "difference",
+    "text",
+    "compare",
+    "component",
+    "text-diff",
+    "diff-viewer"
   ],
   "author": "Richard Russell",
   "license": "MIT",

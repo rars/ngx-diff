@@ -1,0 +1,30 @@
+.progress-bar-container {
+  position: relative;
+  width: 100%;
+  height: 4px;
+}
+
+.progress-bar {
+  height: 4px;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  overflow: hidden;
+  background-color: var(--ngx-diff-progress-background-color);
+}
+
+.progress-bar-inner {
+  height: 100%;
+  width: 30%;
+  background-color: var(--ngx-diff-progress-foreground-color);
+  animation: move 1.5s infinite linear;
+}
+
+@keyframes move {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}

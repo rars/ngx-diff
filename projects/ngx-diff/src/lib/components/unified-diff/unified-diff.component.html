@@ -1,47 +1,58 @@
-<div class="ufd-diff-title-bar">
-  @if (title()) {
-    <span>{{ title() }}</span
-    >&nbsp;
-  }
-  <span class="ufd-diff-summary-lines-added">+++ {{ diffSummary().numLinesAdded }}</span
-  >&nbsp;
-  <span class="ufd-diff-summary-lines-removed">--- {{ diffSummary().numLinesRemoved }}</span>
-</div>
-@if (isContentEqual()) {
-  <div class="ufd-diff">
-    <div class="ufd-diff-no-changes-text">There are no changes to display.</div>
+@if (isCalculating()) {
+  <div class="ufd-diff-title-bar">
+    @if (processedDiff().title) {
+      <span> {{ processedDiff().title }} </span>
+    }
   </div>
+  <ngx-progress-bar></ngx-progress-bar>
 } @else {
-  <div class="ufd-diff">
-    <div class="ufd-diff-margin">
-      @for (lineDiff of calculatedDiff(); track lineDiff.id; let idx = $index) {
-        <div
-          class="line-selector"
-          [ngClass]="
-            lineDiff === selectedLine ? [lineDiff.cssClass, 'selected'] : [lineDiff.cssClass]
-          "
-          (click)="selectLine(idx, lineDiff)"
-        >
-          <div class="ufd-diff-old">{{ lineDiff.lineNumberInOldText | lineNumber }}</div>
-          <div class="ufd-diff-new">{{ lineDiff.lineNumberInNewText | lineNumber }}</div>
-        </div>
-      }
-      <div class="dmp-margin-bottom-spacer"></div>
+  <div class="ufd-diff-title-bar">
+    @if (processedDiff().title) {
+      <span> {{ processedDiff().title }} </span>
+    }
+    <span class="ufd-diff-summary-lines-added">
+      +++ {{ processedDiff().diffSummary.numLinesAdded }}
+    </span>
+    <span class="ufd-diff-summary-lines-removed">
+      --- {{ processedDiff().diffSummary.numLinesRemoved }}
+    </span>
+  </div>
+  @if (processedDiff().isContentEqual) {
+    <div class="ufd-diff">
+      <div class="ufd-diff-no-changes-text">There are no changes to display.</div>
     </div>
-    <div class="ufd-diff-content">
-      <div class="ufd-diff-content-wrapper">
-        @for (lineDiff of calculatedDiff(); track lineDiff.id) {
+  } @else {
+    <div class="ufd-diff">
+      <div class="ufd-diff-margin">
+        @for (lineDiff of calculatedDiff(); track lineDiff.id; let idx = $index) {
           <div
-            class="line-content"
+            class="line-selector"
             [ngClass]="
               lineDiff === selectedLine ? [lineDiff.cssClass, 'selected'] : [lineDiff.cssClass]
             "
+            (click)="selectLine(idx, lineDiff)"
           >
-            <div class="ufd-diff-text">{{ lineDiff.line }}</div>
+            <div class="ufd-diff-old">{{ lineDiff.lineNumberInOldText | lineNumber }}</div>
+            <div class="ufd-diff-new">{{ lineDiff.lineNumberInNewText | lineNumber }}</div>
           </div>
         }
-        <div class="dmp-margin-bottom-spacer line-content"></div>
+        <div class="dmp-margin-bottom-spacer"></div>
+      </div>
+      <div class="ufd-diff-content">
+        <div class="ufd-diff-content-wrapper">
+          @for (lineDiff of calculatedDiff(); track lineDiff.id) {
+            <div
+              class="line-content"
+              [ngClass]="
+                lineDiff === selectedLine ? [lineDiff.cssClass, 'selected'] : [lineDiff.cssClass]
+              "
+            >
+              <div class="ufd-diff-text">{{ lineDiff.line }}</div>
+            </div>
+          }
+          <div class="dmp-margin-bottom-spacer line-content"></div>
+        </div>
       </div>
     </div>
-  </div>
+  }
 }
