@@ -9,7 +9,7 @@
     "test": "ng test ngx-diff --no-watch",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "release": "standard-version"
+    "release": "commit-and-tag-version"
   },
   "private": true,
   "dependencies": {
@@ -30,7 +30,7 @@
     "@angular-eslint/builder": "^21.0.0",
     "@angular-eslint/eslint-plugin": "^21.0.0",
     "@angular-eslint/eslint-plugin-template": "^21.0.0",
-    "@angular-eslint/schematics": "21.2.0",
+    "@angular-eslint/schematics": "21.3.1",
     "@angular-eslint/template-parser": "^21.0.0",
     "@angular/build": "^21.0.0",
     "@angular/cli": "^21.0.0",
@@ -41,6 +41,7 @@
     "@trivago/prettier-plugin-sort-imports": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^8.47.0",
     "@typescript-eslint/parser": "^8.47.0",
+    "commit-and-tag-version": "^12.7.1",
     "eslint": "^9.28.0",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jsdoc": "61.4.0",
@@ -49,7 +50,6 @@
     "jsdom": "^27.2.0",
     "ng-packagr": "^21.0.0",
     "prettier": "^3.5.3",
-    "standard-version": "^9.3.2",
     "typescript": "^5.9.3",
     "vitest": "^4.0.13"
   },
