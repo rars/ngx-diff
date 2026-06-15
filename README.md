@@ -230,6 +230,7 @@ Now `ngx-diff` will detect that you have a Web worker factory configured and use
 | 19              | 10.0.0+          |
 | 20              | 11.0.0+          |
 | 21              | 13.0.0+          |
+| 22              | 14.0.0+          |
 
 ## Contributions welcome!
 
