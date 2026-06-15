@@ -9,7 +9,7 @@ import { LineNumberPipe } from '../../pipes/line-number/line-number.pipe';
 import { DiffMatchPatchService } from '../../services/diff-match-patch/diff-match-patch.service';
 
 class DiffMatchPatchServiceMock {
-  // eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-unused-vars, no-underscore-dangle, id-blacklist, id-match
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public computeLineDiff = (_oldText: string, _newText: string): Promise<Diff[]> =>
     Promise.resolve([
       [DiffOp.Equal, 'Diff One A\r\nDiff One B\r\n'],
