@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 import { LineSelectEvent } from '../../common/line-select-event';
 import { UnifiedDiffComponent } from '../unified-diff/unified-diff.component';
@@ -13,7 +13,6 @@ import { UnifiedDiffComponent } from '../unified-diff/unified-diff.component';
   templateUrl: './inline-diff.component.html',
   styleUrls: ['./inline-diff.component.scss'],
   imports: [UnifiedDiffComponent],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InlineDiffComponent {
   /**

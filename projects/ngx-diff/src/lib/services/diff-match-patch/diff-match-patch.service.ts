@@ -1,6 +1,6 @@
 import { type Diff, DiffMatchPatch } from 'diff-match-patch-ts';
 
-import { inject, Injectable, InjectionToken, OnDestroy } from '@angular/core';
+import { inject, InjectionToken, OnDestroy, Service } from '@angular/core';
 
 export interface IDiffWebWorkerFactory {
   createWorker(): Worker | undefined;
@@ -20,9 +20,7 @@ interface DiffWorkerErrorResponse {
 
 export const NGX_DIFF_WEB_WORKER_FACTORY = new InjectionToken('NGX_DIFF_WEB_WORKER_FACTORY');
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class DiffMatchPatchService implements OnDestroy {
   private readonly dmp = new DiffMatchPatch();
 
