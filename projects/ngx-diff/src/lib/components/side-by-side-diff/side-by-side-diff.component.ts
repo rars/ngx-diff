@@ -1,6 +1,5 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -60,7 +59,6 @@ const transformToString = (value: string | number | boolean | undefined) => valu
   imports: [NgClass, LineNumberPipe, ProgressBarComponent],
   templateUrl: './side-by-side-diff.component.html',
   styleUrl: './side-by-side-diff.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SideBySideDiffComponent implements AfterViewInit {
   private readonly dmp = inject(DiffMatchPatchService);

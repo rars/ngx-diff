@@ -2,7 +2,6 @@ import { Diff, DiffOp } from 'diff-match-patch-ts';
 
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -53,7 +52,6 @@ const transformToString = (value: string | number | boolean | undefined) => valu
   imports: [NgClass, LineNumberPipe, ProgressBarComponent],
   templateUrl: './unified-diff.component.html',
   styleUrl: './unified-diff.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UnifiedDiffComponent implements AfterViewInit {
   private readonly dmp = inject(DiffMatchPatchService);
