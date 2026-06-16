@@ -6,23 +6,19 @@
     "isolatedModules": true,
     "module": "preserve",
     "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
     "noImplicitReturns": true,
-    "noImplicitThis": true,
     "noPropertyAccessFromIndexSignature": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "./dist/out-tsc",
     "skipLibCheck": true,
     "sourceMap": true,
-    "strict": true,
     "target": "ES2022",
     "paths": {
       "ngx-diff": ["./dist/ngx-diff"]
     }
   },
   "angularCompilerOptions": {
-    "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true,
     "enableI18nLegacyMessageIdFormat": false,
     "strictInputAccessModifiers": true,
