@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [15.0.0](https://github.com/rars/ngx-diff/compare/v14.0.0...v15.0.0) (2026-06-16)
+
+
+### Features
+
+* **ngx-diff:** update to diff-match-patch-ts@2.0.0; remove unused compiler settings; remove @angular/animations ([b4c750a](https://github.com/rars/ngx-diff/commit/b4c750a0b5c9e4d5ee73f784a13284aefd9c5703))
+
 ## [14.0.0](https://github.com/rars/ngx-diff/compare/v13.1.0...v14.0.0) (2026-06-15)
 
 
