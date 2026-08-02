@@ -42,12 +42,18 @@
         <div class="ufd-diff-content-wrapper">
           @for (lineDiff of calculatedDiff(); track lineDiff.id) {
             <div
-              class="line-content"
+              class="line-content ufd-diff-text"
               [ngClass]="
                 lineDiff === selectedLine ? [lineDiff.cssClass, 'selected'] : [lineDiff.cssClass]
               "
             >
-              <div class="ufd-diff-text">{{ lineDiff.line }}</div>
+              @if (lineDiff.inlineSegments && lineDiff.inlineSegments.length > 0) {
+                @for (seg of lineDiff.inlineSegments; track $index) {
+                  <span [ngClass]="'ufd-intra-' + seg.type">{{ seg.text }}</span>
+                }
+              } @else {
+                <span>{{ lineDiff.line }}</span>
+              }
             </div>
           }
           <div class="dmp-margin-bottom-spacer line-content"></div>

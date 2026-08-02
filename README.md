@@ -109,9 +109,11 @@ To create your own theme, override the relevant CSS variables; for example, in y
   --ngx-diff-insert-color: #d6ffd6;
   --ngx-diff-delete-color: #ffd6d6;
   --ngx-diff-equal-color: #ffffff;
+  --ngx-diff-none-color: #f2f2f2;
   --ngx-diff-mix-color: #000;
   --ngx-diff-light-mix-percentage: 4%;
   --ngx-diff-heavy-mix-percentage: 10%;
+  --ngx-diff-intra-highlight-mix-percentage: 20%;
 }
 ```
 

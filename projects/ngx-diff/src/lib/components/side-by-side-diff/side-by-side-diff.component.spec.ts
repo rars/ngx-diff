@@ -3,8 +3,23 @@ import { Diff, DiffOp } from 'diff-match-patch-ts';
 
 import { SideBySideDiffComponent } from './side-by-side-diff.component';
 import { DiffMatchPatchService } from '../../services/diff-match-patch/diff-match-patch.service';
-import { LineSelectEvent } from '../../common/line-select-event';
+import { SideBySideLineSelectEvent } from '../../common/line-select-event';
 import { LineDiffType } from '../../common/line-diff-type';
+
+type InputsToOutputsCase = {
+  name: string;
+  before: string;
+  after: string;
+  lineDiffResult: [DiffOp, string][];
+  expectedBeforeLines: {
+    type: LineDiffType;
+    line: string | null;
+  }[];
+  expectedAfterLines: {
+    type: LineDiffType;
+    line: string | null;
+  }[];
+};
 
 class DiffMatchPatchServiceMock {
   computeLineDiff(before: string, after: string): Promise<Diff[]> {
@@ -16,6 +31,11 @@ class DiffMatchPatchServiceMock {
       diffs.push([DiffOp.Insert, after]);
     }
     return Promise.resolve(diffs);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  computeIntraLineDiff(_oldLine: string, _newLine: string, _mode: string) {
+    return { oldSegments: [], newSegments: [] };
   }
 }
 
@@ -74,47 +94,97 @@ describe('SideBySideDiffComponent with Vitest', () => {
     expect(component.afterLines().length).toBe(0);
   });
 
-  it('should handle different content', async () => {
-    const before = 'a\nb';
-    const after = 'a\nc';
-    vi.spyOn(dmpMock, 'computeLineDiff').mockReturnValue(
-      Promise.resolve([
+  const inputsToOutputsCases: InputsToOutputsCase[] = [
+    {
+      name: '1 delete and 1 insert',
+      before: 'a\nb',
+      after: 'a\nc',
+      lineDiffResult: [
         [DiffOp.Equal, 'a\n'],
         [DiffOp.Delete, 'b'],
         [DiffOp.Insert, 'c'],
-      ]),
-    );
+      ],
+      expectedBeforeLines: [
+        { type: LineDiffType.Equal, line: 'a' },
+        { type: LineDiffType.Delete, line: 'b' },
+      ],
+      expectedAfterLines: [
+        { type: LineDiffType.Equal, line: 'a' },
+        { type: LineDiffType.Insert, line: 'c' },
+      ],
+    },
+    {
+      name: '2 delete and 1 insert',
+      before: 'a\nb\nc',
+      after: 'a\nd',
+      lineDiffResult: [
+        [DiffOp.Equal, 'a\n'],
+        [DiffOp.Delete, 'b\n'],
+        [DiffOp.Delete, 'c\n'],
+        [DiffOp.Insert, 'd'],
+      ],
+      expectedBeforeLines: [
+        { type: LineDiffType.Equal, line: 'a' },
+        { type: LineDiffType.Delete, line: 'b' },
+        { type: LineDiffType.Delete, line: 'c' },
+      ],
+      expectedAfterLines: [
+        { type: LineDiffType.Equal, line: 'a' },
+        { type: LineDiffType.Insert, line: 'd' },
+        { type: LineDiffType.None, line: null },
+      ],
+    },
+    {
+      name: '1 delete and 2 insert',
+      before: 'a\nb',
+      after: 'a\nc\nd',
+      lineDiffResult: [
+        [DiffOp.Equal, 'a\n'],
+        [DiffOp.Delete, 'b'],
+        [DiffOp.Insert, 'c\n'],
+        [DiffOp.Insert, 'd'],
+      ],
+      expectedBeforeLines: [
+        { type: LineDiffType.Equal, line: 'a' },
+        { type: LineDiffType.Delete, line: 'b' },
+        { type: LineDiffType.None, line: null },
+      ],
+      expectedAfterLines: [
+        { type: LineDiffType.Equal, line: 'a' },
+        { type: LineDiffType.Insert, line: 'c' },
+        { type: LineDiffType.Insert, line: 'd' },
+      ],
+    },
+  ];
 
-    fixture.componentRef.setInput('before', before);
-    fixture.componentRef.setInput('after', after);
+  it.each(inputsToOutputsCases)(
+    'should handle $name',
+    async ({ before, after, lineDiffResult, expectedBeforeLines, expectedAfterLines }) => {
+      vi.spyOn(dmpMock, 'computeLineDiff').mockReturnValue(Promise.resolve(lineDiffResult));
 
-    fixture.detectChanges();
-    await vi.runAllTimersAsync();
-    fixture.detectChanges();
+      fixture.componentRef.setInput('before', before);
+      fixture.componentRef.setInput('after', after);
 
-    expect(component.isCalculating()).toBe(false);
-    expect(component.processedDiff().isContentEqual).toBe(false);
-    expect(component.beforeLines().length).toBe(3);
-    expect(component.afterLines().length).toBe(3);
+      fixture.detectChanges();
+      await vi.runAllTimersAsync();
+      fixture.detectChanges();
 
-    // Line 1: equal
-    expect(component.beforeLines()[0].type).toBe(LineDiffType.Equal);
-    expect(component.beforeLines()[0].line).toBe('a');
-    expect(component.afterLines()[0].type).toBe(LineDiffType.Equal);
-    expect(component.afterLines()[0].line).toBe('a');
+      expect(component.isCalculating()).toBe(false);
+      expect(component.processedDiff().isContentEqual).toBe(false);
+      expect(component.beforeLines().length).toBe(expectedBeforeLines.length);
+      expect(component.afterLines().length).toBe(expectedAfterLines.length);
 
-    // Line 2: delete
-    expect(component.beforeLines()[1].type).toBe(LineDiffType.Delete);
-    expect(component.beforeLines()[1].line).toBe('b');
-    expect(component.afterLines()[1].type).toBe(LineDiffType.Delete);
-    expect(component.afterLines()[1].line).toBe(null);
+      expectedBeforeLines.forEach((expectedLine, index) => {
+        expect(component.beforeLines()[index].type).toBe(expectedLine.type);
+        expect(component.beforeLines()[index].line).toBe(expectedLine.line);
+      });
 
-    // Line 3: insert
-    expect(component.beforeLines()[2].type).toBe(LineDiffType.Insert);
-    expect(component.beforeLines()[2].line).toBe(null);
-    expect(component.afterLines()[2].type).toBe(LineDiffType.Insert);
-    expect(component.afterLines()[2].line).toBe('c');
-  });
+      expectedAfterLines.forEach((expectedLine, index) => {
+        expect(component.afterLines()[index].type).toBe(expectedLine.type);
+        expect(component.afterLines()[index].line).toBe(expectedLine.line);
+      });
+    },
+  );
 
   it('should emit line select event', async () => {
     const emitSpy = vi.spyOn(component.selectedLineChange, 'emit');
@@ -129,12 +199,18 @@ describe('SideBySideDiffComponent with Vitest', () => {
 
     component.selectLine(0);
 
-    const expectedEvent: LineSelectEvent = {
+    const expectedEvent: SideBySideLineSelectEvent = {
       index: 0,
-      type: LineDiffType.Delete,
-      lineNumberInOldText: 1,
-      lineNumberInNewText: null,
-      line: 'a',
+      before: {
+        type: LineDiffType.Delete,
+        lineNumber: 1,
+        line: 'a',
+      },
+      after: {
+        type: LineDiffType.Insert,
+        lineNumber: 1,
+        line: 'b',
+      },
     };
     expect(emitSpy).toHaveBeenCalledWith(expect.objectContaining(expectedEvent));
   });

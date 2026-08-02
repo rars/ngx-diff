@@ -17,6 +17,12 @@ class DiffMatchPatchServiceMock {
       [DiffOp.Delete, 'Diff Three A\r\nDiff Three B'],
       [DiffOp.Equal, 'Diff Four A\r\nDiff Four B\r\n'],
     ]);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public computeIntraLineDiff = (_oldLine: string, _newLine: string, _mode: string) => ({
+    oldSegments: [],
+    newSegments: [],
+  });
 }
 
 describe('UnifiedDiffComponent', () => {

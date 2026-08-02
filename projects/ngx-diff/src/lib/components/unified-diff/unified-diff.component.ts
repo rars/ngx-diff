@@ -16,6 +16,8 @@ import {
 } from '@angular/core';
 
 import { IDiffCalculation } from '../../common/diff-calculation.interface';
+import { InlineSegment } from '../../common/inline-segment.interface';
+import { IntraLineDiffMode } from '../../common/intra-line-diff-mode.type';
 import { LineDiffType } from '../../common/line-diff-type';
 import { LineSelectEvent } from '../../common/line-select-event';
 import { DiffMatchPatchService } from '../../services/diff-match-patch/diff-match-patch.service';
@@ -34,6 +36,8 @@ type LineDiff = {
   line: string;
   args?: { skippedLines?: string[]; lineInOldText?: number | null; lineInNewText?: number | null };
   cssClass: string;
+  /** Intra-line segments for highlighting when intraLineDiffMode != 'none'. Only set on Insert/Delete lines. */
+  inlineSegments?: InlineSegment[];
 };
 
 type LineDiffResult = {
@@ -73,6 +77,13 @@ export class UnifiedDiffComponent implements AfterViewInit {
   public readonly isDynamicLineNumberWidthEnabled = input<boolean>(false);
   public readonly before = input.required<string | number | boolean | undefined>();
   public readonly after = input.required<string | number | boolean | undefined>();
+
+  /**
+   * @description
+   * Controls intra-line diff highlighting: 'none' (default), 'word', or 'character'.
+   * When set, changed lines will have sub-line regions highlighted.
+   */
+  public readonly intraLineDiffMode = input<IntraLineDiffMode>('none');
 
   protected readonly diffData = computed(() => ({
     title: this.title(),
@@ -121,7 +132,9 @@ export class UnifiedDiffComponent implements AfterViewInit {
   public constructor() {
     effect(() => {
       this.isCalculatingSubject.next(false);
-      this.calculatedDiff.set(this.processedDiff().calculatedDiff);
+      const baseDiff = this.processedDiff().calculatedDiff;
+      const mode = this.intraLineDiffMode();
+      this.calculatedDiff.set(this.applyIntraLineDiffs(baseDiff, mode));
     });
   }
 
@@ -170,6 +183,71 @@ export class UnifiedDiffComponent implements AfterViewInit {
       lineNumberInNewText,
       line,
     });
+  }
+
+  /**
+   * Apply intra-line diff highlighting by pairing consecutive Delete/Insert blocks.
+   */
+  private applyIntraLineDiffs(lines: LineDiff[], mode: IntraLineDiffMode): LineDiff[] {
+    if (mode === 'none') {
+      return lines;
+    }
+
+    const result: LineDiff[] = [];
+    let i = 0;
+
+    while (i < lines.length) {
+      const current = lines[i];
+
+      // Collect a run of either Delete or Insert types and their opposites and then try to intraline diff between pairs of lines
+      if (current.type === LineDiffType.Delete || current.type === LineDiffType.Insert) {
+        const currentType = current.type;
+        const opposingType =
+          current.type === LineDiffType.Delete ? LineDiffType.Insert : LineDiffType.Delete;
+
+        const currentLines: LineDiff[] = [];
+        while (i < lines.length && lines[i].type === currentType) {
+          currentLines.push(lines[i]);
+          i++;
+        }
+
+        const opposingLines: LineDiff[] = [];
+        while (i < lines.length && lines[i].type === opposingType) {
+          opposingLines.push(lines[i]);
+          i++;
+        }
+
+        const pairCount = Math.min(currentLines.length, opposingLines.length);
+        const firstSection: LineDiff[] = [];
+        const secondSection: LineDiff[] = [];
+        for (let j = 0; j < pairCount; j++) {
+          const { oldSegments, newSegments } = this.dmp.computeIntraLineDiff(
+            currentLines[j].line,
+            opposingLines[j].line,
+            mode,
+          );
+
+          firstSection.push({ ...currentLines[j], inlineSegments: oldSegments });
+          secondSection.push({ ...opposingLines[j], inlineSegments: newSegments });
+        }
+
+        for (let j = pairCount; j < currentLines.length; j++) {
+          firstSection.push(currentLines[j]);
+        }
+
+        for (let j = pairCount; j < opposingLines.length; j++) {
+          secondSection.push(opposingLines[j]);
+        }
+
+        result.push(...firstSection);
+        result.push(...secondSection);
+      } else {
+        result.push(current);
+        i++;
+      }
+    }
+
+    return result;
   }
 
   private expandPlaceholder(index: number, placeholder: LineDiff): void {

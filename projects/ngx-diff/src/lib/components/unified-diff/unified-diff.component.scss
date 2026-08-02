@@ -54,6 +54,16 @@ div.ufd-diff-content-wrapper {
   min-width: 100%;
 }
 
+div.line-content {
+  display: flex;
+  align-items: stretch;
+}
+
+// When the line has no content (e.g. diff-none blocks), this ensures that the span has a height and thus the line has a height.
+div.line-content span:empty::before {
+  content: '\200b'; // zero-width space character
+}
+
 div.ufd-diff-old {
   width: var(--ngx-diff-line-number-width);
   text-align: center;
@@ -98,15 +108,7 @@ div.ufd-diff-text {
   }
 }
 
-.ufd-diff-delete > div {
-  display: inline-block;
-}
-
-.ufd-diff-insert > div {
-  display: inline-block;
-}
-
-.ufd-diff-equal > div {
+:is(.ufd-diff-delete, .ufd-diff-insert, .ufd-diff-equal) > div {
   display: inline-block;
 }
 
@@ -121,6 +123,8 @@ div.ufd-diff-text {
 }
 
 .line-selector {
+  display: flex;
+  align-items: stretch;
   color: var(--ngx-diff-line-number-font-color);
 
   &:hover {
@@ -141,4 +145,17 @@ div.ufd-diff-text {
   border-right: var(--ngx-diff-selected-border-width) solid var(--ngx-diff-selected-border-color);
   border-bottom: var(--ngx-diff-selected-border-width) solid var(--ngx-diff-selected-border-color);
   background-color: var(--ngx-diff-selected-line-background-color);
+}
+
+// Intra-line highlighting segments (DiffOp.Delete = -1, DiffOp.Insert = 1)
+.ufd-diff-text {
+  // DiffOp.Delete = -1
+  .ufd-intra--1 {
+    background-color: var(--ngx-diff-intra-delete-highlight-color);
+  }
+
+  // DiffOp.Insert = 1
+  .ufd-intra-1 {
+    background-color: var(--ngx-diff-intra-insert-highlight-color);
+  }
 }

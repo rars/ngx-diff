@@ -7,3 +7,15 @@ export type LineSelectEvent = {
   lineNumberInNewText: number | null;
   line: string;
 };
+
+export type LineDiffDescription = {
+  type: LineDiffType;
+  lineNumber: number | null;
+  line: string | null;
+};
+
+export type SideBySideLineSelectEvent = {
+  index: number;
+  before: LineDiffDescription;
+  after: LineDiffDescription;
+};
