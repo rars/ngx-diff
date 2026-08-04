@@ -1,6 +1,6 @@
 {
   "name": "ngx-diff",
-  "version": "15.0.0",
+  "version": "16.0.0",
   "type": "module",
   "scripts": {
     "ng": "ng",
