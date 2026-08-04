@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [16.0.0](https://github.com/rars/ngx-diff/compare/v15.0.0...v16.0.0) (2026-08-04)
+
+
+### Features
+
+* add inline diff highlighting ([dfbb272](https://github.com/rars/ngx-diff/commit/dfbb272f79297e6931048d3dcdd6901696f4cd96))
+
 ## [15.0.0](https://github.com/rars/ngx-diff/compare/v14.0.0...v15.0.0) (2026-06-16)
 
 
