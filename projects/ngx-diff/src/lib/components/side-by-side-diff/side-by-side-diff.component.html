@@ -42,12 +42,18 @@
         <div class="sbs-diff-content-wrapper">
           @for (lineDiff of beforeLines(); track lineDiff.id; let idx = $index) {
             <div
-              class="line-content"
+              class="line-content sbs-diff-text"
               [ngClass]="
                 idx === selectedLineIndex ? [lineDiff.cssClass, 'selected'] : [lineDiff.cssClass]
               "
             >
-              <div class="sbs-diff-text">{{ lineDiff.line }}</div>
+              @if (lineDiff.inlineSegments && lineDiff.inlineSegments.length > 0) {
+                @for (seg of lineDiff.inlineSegments; track $index) {
+                  <span [ngClass]="'sbs-intra-' + seg.type">{{ seg.text }}</span>
+                }
+              } @else {
+                <span>{{ lineDiff.line }}</span>
+              }
             </div>
           }
           <div class="dmp-margin-bottom-spacer line-content"></div>
@@ -72,12 +78,18 @@
         <div class="sbs-diff-content-wrapper">
           @for (lineDiff of afterLines(); track lineDiff.id; let idx = $index) {
             <div
-              class="line-content"
+              class="line-content sbs-diff-text"
               [ngClass]="
                 idx === selectedLineIndex ? [lineDiff.cssClass, 'selected'] : [lineDiff.cssClass]
               "
             >
-              <div class="sbs-diff-text">{{ lineDiff.line }}</div>
+              @if (lineDiff.inlineSegments && lineDiff.inlineSegments.length > 0) {
+                @for (seg of lineDiff.inlineSegments; track $index) {
+                  <span [ngClass]="'sbs-intra-' + seg.type">{{ seg.text }}</span>
+                }
+              } @else {
+                <span>{{ lineDiff.line }}</span>
+              }
             </div>
           }
           <div class="dmp-margin-bottom-spacer line-content"></div>

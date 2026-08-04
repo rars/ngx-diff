@@ -16,9 +16,11 @@ import { Diff, DiffOp } from 'diff-match-patch-ts';
 import { DiffMatchPatchService } from '../../services/diff-match-patch/diff-match-patch.service';
 
 import { LineNumberPipe } from '../../pipes/line-number/line-number.pipe';
+import { InlineSegment } from '../../common/inline-segment.interface';
+import { IntraLineDiffMode } from '../../common/intra-line-diff-mode.type';
 import { LineDiffType } from '../../common/line-diff-type';
 import { NgClass } from '@angular/common';
-import { LineSelectEvent } from '../../common/line-select-event';
+import { LineDiffDescription, SideBySideLineSelectEvent } from '../../common/line-select-event';
 import { StyleCalculatorService } from '../../services/style-calculator/style-calculator.service';
 import { BehaviorSubject, debounceTime, startWith, switchMap } from 'rxjs';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
@@ -35,6 +37,8 @@ interface ILine {
   lineNumber: number | null;
   line: string | null;
   cssClass: string;
+  /** Intra-line segments for highlighting when intraLineDiffMode != 'none'. */
+  inlineSegments?: InlineSegment[];
   args?: {
     skippedLines: string[];
     beforeLineNumber: number;
@@ -81,6 +85,13 @@ export class SideBySideDiffComponent implements AfterViewInit {
   public readonly before = input.required<string | number | boolean | undefined>();
   public readonly after = input.required<string | number | boolean | undefined>();
 
+  /**
+   * @description
+   * Controls intra-line diff highlighting: 'none' (default), 'word', or 'character'.
+   * When set, changed lines will have sub-line regions highlighted.
+   */
+  public readonly intraLineDiffMode = input<IntraLineDiffMode>('none');
+
   protected readonly diffData = computed(() => ({
     title: this.title(),
     before: transformToString(this.before()),
@@ -93,7 +104,7 @@ export class SideBySideDiffComponent implements AfterViewInit {
    */
   public readonly lineContextSize = input<number>();
 
-  public readonly selectedLineChange = output<LineSelectEvent>();
+  public readonly selectedLineChange = output<SideBySideLineSelectEvent>();
 
   private readonly isCalculatingSubject = new BehaviorSubject(false);
   public readonly isCalculating = toSignal(
@@ -129,9 +140,16 @@ export class SideBySideDiffComponent implements AfterViewInit {
       this.isCalculatingSubject.next(false);
 
       const { beforeLines, afterLines } = this.processedDiff();
+      const mode = this.intraLineDiffMode();
 
-      this.beforeLines.set(beforeLines);
-      this.afterLines.set(afterLines);
+      const [annotatedBefore, annotatedAfter] = this.applyIntraLineDiffs(
+        beforeLines,
+        afterLines,
+        mode,
+      );
+
+      this.beforeLines.set(annotatedBefore);
+      this.afterLines.set(annotatedAfter);
     });
   }
 
@@ -173,42 +191,72 @@ export class SideBySideDiffComponent implements AfterViewInit {
     const selectedBeforeLine = this.beforeLines()[index];
     const selectedAfterLine = this.afterLines()[index];
 
-    const type = selectedAfterLine.type;
+    const getLineDescription = (obj: ILine): LineDiffDescription => {
+      return {
+        type: obj.type,
+        lineNumber: obj.lineNumber,
+        line: obj.line,
+      };
+    };
 
-    const line =
-      (type === LineDiffType.Delete ? selectedBeforeLine.line : selectedAfterLine.line) ?? '';
-
-    let lineNumberInOldText: number | null = null;
-    let lineNumberInNewText: number | null = null;
-
-    switch (type) {
-      case LineDiffType.Insert: {
-        lineNumberInNewText = selectedAfterLine.lineNumber;
-        break;
-      }
-      case LineDiffType.Delete: {
-        lineNumberInOldText = selectedBeforeLine.lineNumber;
-        break;
-      }
-      case LineDiffType.Equal: {
-        lineNumberInOldText = selectedBeforeLine.lineNumber;
-        lineNumberInNewText = selectedAfterLine.lineNumber;
-        break;
-      }
-    }
-
-    if (type === LineDiffType.Placeholder) {
+    if (
+      selectedBeforeLine.type === LineDiffType.Placeholder &&
+      selectedAfterLine.type === LineDiffType.Placeholder
+    ) {
       this.expandPlaceholder(index, selectedBeforeLine);
       this.selectedLineIndex = undefined;
     }
 
     this.selectedLineChange.emit({
       index,
-      type,
-      lineNumberInOldText,
-      lineNumberInNewText,
-      line,
+      before: getLineDescription(selectedBeforeLine),
+      after: getLineDescription(selectedAfterLine),
     });
+  }
+
+  /**
+   * Apply intra-line diff highlighting by pairing Delete rows with Insert rows at the same index.
+   * In the side-by-side view, Delete rows and Insert rows appear at the same indices (one per side).
+   */
+  private applyIntraLineDiffs(
+    beforeLines: ILine[],
+    afterLines: ILine[],
+    mode: IntraLineDiffMode,
+  ): [ILine[], ILine[]] {
+    if (mode === 'none') {
+      return [beforeLines, afterLines];
+    }
+
+    const newBefore: ILine[] = [];
+    const newAfter: ILine[] = [];
+
+    const maxIndex = Math.min(beforeLines.length, afterLines.length);
+
+    if (beforeLines.length < maxIndex || afterLines.length < maxIndex) {
+      console.warn(
+        `ngx-diff: something is not right ${beforeLines.length} lines in before and ${afterLines.length} lines in after do not match.`,
+      );
+    }
+
+    for (let i = 0; i < maxIndex; i++) {
+      const b = beforeLines[i];
+      const a = afterLines[i];
+
+      if (b.type === LineDiffType.Delete && a.type === LineDiffType.Insert) {
+        const { oldSegments, newSegments } = this.dmp.computeIntraLineDiff(
+          b.line ?? '',
+          a.line ?? '',
+          mode,
+        );
+        newBefore.push({ ...b, inlineSegments: oldSegments });
+        newAfter.push({ ...a, inlineSegments: newSegments });
+      } else {
+        newBefore.push(b);
+        newAfter.push(a);
+      }
+    }
+
+    return [newBefore, newAfter];
   }
 
   private expandPlaceholder(index: number, placeholder: ILine): void {
@@ -349,8 +397,11 @@ export class SideBySideDiffComponent implements AfterViewInit {
     }
 
     const lineContextSize = this.lineContextSize();
-    for (let i = 0; i < diffs.length; i++) {
-      const diff = diffs[i];
+    let i = 0;
+
+    let context: Diff[] = [];
+
+    const getDiffLines = (diff: Diff): string[] => {
       const diffLines: string[] = diff[1].split(/\r?\n/);
 
       // If the original line had a \r\n at the end then remove the
@@ -359,45 +410,75 @@ export class SideBySideDiffComponent implements AfterViewInit {
         diffLines.pop();
       }
 
-      switch (diff[0]) {
-        case DiffOp.Equal: {
-          const isFirstDiff = i === 0;
-          const isLastDiff = i === diffs.length - 1;
-          SideBySideDiffComponent.outputEqualDiff(
-            diffLines,
-            diffCalculation,
-            isFirstDiff,
-            isLastDiff,
-            lineContextSize,
-            beforeLines,
-            afterLines,
-          );
-          break;
-        }
-        case DiffOp.Delete: {
-          SideBySideDiffComponent.outputDeleteDiff(
-            diffLines,
-            diffCalculation,
-            beforeLines,
-            afterLines,
-          );
-          break;
-        }
-        case DiffOp.Insert: {
-          SideBySideDiffComponent.outputInsertDiff(
-            diffLines,
+      return diffLines;
+    };
+
+    while (i < diffs.length) {
+      const diff = diffs[i];
+
+      if (diff[0] === DiffOp.Equal) {
+        if (context.length > 0) {
+          const deleteContext = context
+            .filter((x) => x[0] === DiffOp.Delete)
+            .map((x) => ({ ...x, diffLines: getDiffLines(x) }));
+          const insertContext = context
+            .filter((x) => x[0] === DiffOp.Insert)
+            .map((x) => ({ ...x, diffLines: getDiffLines(x) }));
+
+          SideBySideDiffComponent.outputChangedLinesDiff(
+            deleteContext.flatMap((x) => x.diffLines),
+            insertContext.flatMap((x) => x.diffLines),
             diffCalculation,
             beforeLines,
             afterLines,
           );
-          break;
+
+          context = [];
         }
+
+        const isFirstDiff = i === 0;
+        const isLastDiff = i === diffs.length - 1;
+        const diffLines = getDiffLines(diff);
+        SideBySideDiffComponent.outputEqualDiff(
+          diffLines,
+          diffCalculation,
+          isFirstDiff,
+          isLastDiff,
+          lineContextSize,
+          beforeLines,
+          afterLines,
+        );
+      } else {
+        context.push(diff);
       }
+
+      i++;
+    }
+
+    if (context.length > 0) {
+      const deleteContext = context
+        .filter((x) => x[0] === DiffOp.Delete)
+        .map((x) => ({ ...x, diffLines: getDiffLines(x) }));
+      const insertContext = context
+        .filter((x) => x[0] === DiffOp.Insert)
+        .map((x) => ({ ...x, diffLines: getDiffLines(x) }));
+
+      SideBySideDiffComponent.outputChangedLinesDiff(
+        deleteContext.flatMap((x) => x.diffLines),
+        insertContext.flatMap((x) => x.diffLines),
+        diffCalculation,
+        beforeLines,
+        afterLines,
+      );
+
+      context = [];
     }
 
     const diffSummary = {
-      numLinesAdded: afterLines.filter((x) => x.type === LineDiffType.Insert).length,
-      numLinesRemoved: beforeLines.filter((x) => x.type === LineDiffType.Delete).length,
+      numLinesAdded: afterLines.filter((x) => x.type === LineDiffType.Insert && x.line !== null)
+        .length,
+      numLinesRemoved: beforeLines.filter((x) => x.type === LineDiffType.Delete && x.line !== null)
+        .length,
     };
 
     return {
@@ -516,57 +597,56 @@ export class SideBySideDiffComponent implements AfterViewInit {
     }
   }
 
-  private static outputDeleteDiff(
-    diffLines: string[],
+  private static outputChangedLinesDiff(
+    diffLinesBefore: string[],
+    diffLinesAfter: string[],
     diffCalculation: IDiffCalculation,
     beforeLines: ILine[],
     afterLines: ILine[],
   ): void {
-    for (const line of diffLines) {
-      beforeLines.push({
-        id: `del-${diffCalculation.beforeLineNumber}`,
-        type: LineDiffType.Delete,
-        lineNumber: diffCalculation.beforeLineNumber,
-        line,
-        cssClass: this.getCssClass(LineDiffType.Delete),
-      });
+    const maxLines = Math.max(diffLinesBefore.length, diffLinesAfter.length);
 
-      afterLines.push({
-        id: `del-${diffCalculation.beforeLineNumber}`,
-        type: LineDiffType.Delete,
-        lineNumber: null,
-        line: null,
-        cssClass: this.getCssClass(LineDiffType.Delete),
-      });
+    for (let i = 0; i < maxLines; i++) {
+      const beforeLine = diffLinesBefore[i];
+      const afterLine = diffLinesAfter[i];
 
-      diffCalculation.beforeLineNumber++;
-    }
-  }
+      if (beforeLine !== undefined) {
+        beforeLines.push({
+          id: `del-${diffCalculation.beforeLineNumber}`,
+          type: LineDiffType.Delete,
+          lineNumber: diffCalculation.beforeLineNumber,
+          line: beforeLine,
+          cssClass: this.getCssClass(LineDiffType.Delete),
+        });
+        diffCalculation.beforeLineNumber++;
+      } else {
+        beforeLines.push({
+          id: `gap-${diffCalculation.afterLineNumber}`,
+          type: LineDiffType.None,
+          lineNumber: null,
+          line: null,
+          cssClass: this.getCssClass(LineDiffType.None),
+        });
+      }
 
-  private static outputInsertDiff(
-    diffLines: string[],
-    diffCalculation: IDiffCalculation,
-    beforeLines: ILine[],
-    afterLines: ILine[],
-  ): void {
-    for (const line of diffLines) {
-      beforeLines.push({
-        id: `ins-${diffCalculation.afterLineNumber}`,
-        type: LineDiffType.Insert,
-        lineNumber: null,
-        line: null,
-        cssClass: this.getCssClass(LineDiffType.Insert),
-      });
-
-      afterLines.push({
-        id: `ins-${diffCalculation.afterLineNumber}`,
-        type: LineDiffType.Insert,
-        lineNumber: diffCalculation.afterLineNumber,
-        line,
-        cssClass: this.getCssClass(LineDiffType.Insert),
-      });
-
-      diffCalculation.afterLineNumber++;
+      if (afterLine !== undefined) {
+        afterLines.push({
+          id: `ins-${diffCalculation.afterLineNumber}`,
+          type: LineDiffType.Insert,
+          lineNumber: diffCalculation.afterLineNumber,
+          line: afterLine,
+          cssClass: this.getCssClass(LineDiffType.Insert),
+        });
+        diffCalculation.afterLineNumber++;
+      } else {
+        afterLines.push({
+          id: `gap-${diffCalculation.beforeLineNumber}`,
+          type: LineDiffType.None,
+          lineNumber: null,
+          line: null,
+          cssClass: this.getCssClass(LineDiffType.None),
+        });
+      }
     }
   }
 
@@ -579,6 +659,8 @@ export class SideBySideDiffComponent implements AfterViewInit {
         return 'sbs-diff-insert';
       case LineDiffType.Delete:
         return 'sbs-diff-delete';
+      case LineDiffType.None:
+        return 'sbs-diff-none';
       default:
         return 'unknown';
     }

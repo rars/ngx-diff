@@ -57,6 +57,11 @@ div.sbs-diff-content-wrapper {
   min-width: 100%;
 }
 
+div.line-content {
+  display: flex;
+  align-items: stretch;
+}
+
 div.sbs-diff-old {
   width: var(--ngx-diff-line-number-width);
   text-align: center;
@@ -77,11 +82,24 @@ div.sbs-diff-text {
   color: var(--ngx-diff-font-color);
 }
 
+// When the line has no content (e.g. diff-none blocks), this ensures that the span has a height and thus the line has a height.
+div.sbs-diff-text span:empty::before {
+  content: '\200b'; // zero-width space character
+}
+
 .sbs-diff-equal {
   background-color: var(--ngx-diff-margin-background-color);
 
   &.line-content {
     background-color: var(--ngx-diff-equal-background-color);
+  }
+}
+
+.sbs-diff-none {
+  background-color: var(--ngx-diff-none-color-darker);
+
+  &.line-content {
+    background-color: var(--ngx-diff-none-background-color);
   }
 }
 
@@ -101,15 +119,7 @@ div.sbs-diff-text {
   }
 }
 
-.sbs-diff-delete > div {
-  display: inline-block;
-}
-
-.sbs-diff-insert > div {
-  display: inline-block;
-}
-
-.sbs-diff-equal > div {
+:is(.sbs-diff-delete, .sbs-diff-insert, .sbs-diff-equal, .sbs-diff-none) > div {
   display: inline-block;
 }
 
@@ -124,12 +134,15 @@ div.sbs-diff-text {
 }
 
 .line-selector {
+  display: flex;
+  align-items: stretch;
   color: var(--ngx-diff-line-number-font-color);
 
   .sbs-diff-before,
   .sbs-diff-after {
     width: var(--ngx-diff-line-number-width);
     text-align: center;
+    font-size: var(--ngx-diff-font-size);
   }
 
   &:hover {
@@ -150,4 +163,17 @@ div.sbs-diff-text {
   border-right: var(--ngx-diff-selected-border-width) solid var(--ngx-diff-selected-border-color);
   border-bottom: var(--ngx-diff-selected-border-width) solid var(--ngx-diff-selected-border-color);
   background-color: var(--ngx-diff-selected-line-background-color);
+}
+
+// Intra-line highlighting segments (DiffOp.Delete = -1, DiffOp.Insert = 1)
+.sbs-diff-text {
+  // DiffOp.Delete = -1
+  .sbs-intra--1 {
+    background-color: var(--ngx-diff-intra-delete-highlight-color);
+  }
+
+  // DiffOp.Insert = 1
+  .sbs-intra-1 {
+    background-color: var(--ngx-diff-intra-insert-highlight-color);
+  }
 }

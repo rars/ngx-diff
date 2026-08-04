@@ -8,3 +8,5 @@ export * from './lib/components/side-by-side-diff/side-by-side-diff.component';
 export * from './lib/components/unified-diff/unified-diff.component';
 export * from './lib/common/line-select-event';
 export * from './lib/common/line-diff-type';
+export * from './lib/common/intra-line-diff-mode.type';
+export * from './lib/common/inline-segment.interface';

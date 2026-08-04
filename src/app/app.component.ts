@@ -1,4 +1,9 @@
-import { InlineDiffComponent, SideBySideDiffComponent, UnifiedDiffComponent } from 'ngx-diff';
+import {
+  InlineDiffComponent,
+  IntraLineDiffMode,
+  SideBySideDiffComponent,
+  UnifiedDiffComponent,
+} from 'ngx-diff';
 
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -33,8 +38,9 @@ common text
 common text
 common text
 common text
-apples
+apples oranges grapes
 oranges
+common text
 common text
 common text
 common text
@@ -81,8 +87,10 @@ common text
 common text
 common text
 common text
-apples
+common text
+apples pears grapes
 pears
+common text
 common text
 common text
 common text
@@ -115,6 +123,10 @@ kiwis
 grapefruit
 carrots
 `);
+
+  public readonly intraLineDiffMode = signal<IntraLineDiffMode>('word');
+
+  public readonly intraLineModeOptions: IntraLineDiffMode[] = ['none', 'word', 'character'];
 
   public constructor() {
     this.dataLoaderService.getExampleDiffs().subscribe((examples) => (this.examples = examples));
