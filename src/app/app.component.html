@@ -1,92 +1,101 @@
-<div class="controls">
-  <div>
-    <textarea [(ngModel)]="oldText"></textarea>
+<main>
+  <h1>ngx-diff Demo</h1>
+  <div class="controls">
+    <div>
+      <label>
+        <span style="color: white">Before</span>
+        <textarea [(ngModel)]="oldText"></textarea>
+      </label>
+    </div>
+    <div>
+      <label>
+        <span style="color: white">After</span>
+        <textarea [(ngModel)]="newText"></textarea>
+      </label>
+    </div>
+    <div class="control-row">
+      <button type="button" (click)="loadNextExample()">Next Example</button>
+
+      <label>
+        <span style="color: white">Intra-line Diff Mode:</span>
+        <select [(ngModel)]="intraLineDiffMode">
+          @for (opt of intraLineModeOptions; track opt) {
+            <option [value]="opt">{{ opt }}</option>
+          }
+        </select>
+      </label>
+    </div>
   </div>
-  <div>
-    <textarea [(ngModel)]="newText"></textarea>
+
+  <div class="ngx-diff-light-theme">
+    <ngx-unified-diff
+      [title]="title()"
+      [before]="oldText()"
+      [after]="newText()"
+      [lineContextSize]="4"
+      [isDynamicLineNumberWidthEnabled]="true"
+      [intraLineDiffMode]="intraLineDiffMode()"
+      style="width: 100%"
+      (selectedLineChange)="selectedLineChange($event)"
+    />
+
+    <br />
+    <ngx-unified-diff
+      class="ngx-diff-dark-theme"
+      title="github/user/src/main.ts (dark)"
+      [before]="oldText()"
+      [after]="newText()"
+      [lineContextSize]="4"
+      [isDynamicLineNumberWidthEnabled]="true"
+      [intraLineDiffMode]="intraLineDiffMode()"
+      style="width: 100%"
+      (selectedLineChange)="selectedLineChange($event)"
+    />
+
+    <br />
+    <ngx-side-by-side-diff
+      [title]="title()"
+      [before]="oldText()"
+      [after]="newText()"
+      [lineContextSize]="4"
+      [isDynamicLineNumberWidthEnabled]="true"
+      [intraLineDiffMode]="intraLineDiffMode()"
+      style="width: 100%"
+      (selectedLineChange)="selectedLineChange($event)"
+    />
+
+    <br />
+    <ngx-side-by-side-diff
+      class="ngx-diff-dark-theme"
+      title="github/user/src/main.ts (dark)"
+      [before]="oldText()"
+      [after]="newText()"
+      [lineContextSize]="4"
+      [isDynamicLineNumberWidthEnabled]="true"
+      [intraLineDiffMode]="intraLineDiffMode()"
+      style="width: 100%"
+      (selectedLineChange)="selectedLineChange($event)"
+    />
+
+    <br />
+    <inline-diff
+      class="my-inline-diff-theme"
+      [oldText]="oldText()"
+      [newText]="newText()"
+      [lineContextSize]="4"
+      style="width: 100%"
+      (selectedLineChange)="selectedLineChange($event)"
+    />
+
+    <br />
+    <ngx-unified-diff
+      [title]="title()"
+      [before]="oldText()"
+      [after]="newText()"
+      [lineContextSize]="4"
+      [isDynamicLineNumberWidthEnabled]="true"
+      style="width: 100%"
+      (selectedLineChange)="selectedLineChange($event)"
+    />
   </div>
-  <div class="control-row">
-    <button type="button" (click)="loadNextExample()">Next Example</button>
-
-    <label>
-      Intra-line Diff Mode:
-      <select [(ngModel)]="intraLineDiffMode">
-        @for (opt of intraLineModeOptions; track opt) {
-          <option [value]="opt">{{ opt }}</option>
-        }
-      </select>
-    </label>
-  </div>
-</div>
-
-<div class="ngx-diff-light-theme">
-  <ngx-unified-diff
-    [title]="title()"
-    [before]="oldText()"
-    [after]="newText()"
-    [lineContextSize]="4"
-    [isDynamicLineNumberWidthEnabled]="true"
-    [intraLineDiffMode]="intraLineDiffMode()"
-    style="width: 100%"
-    (selectedLineChange)="selectedLineChange($event)"
-  />
-
-  <br />
-  <ngx-unified-diff
-    class="ngx-diff-dark-theme"
-    title="github/user/src/main.ts (dark)"
-    [before]="oldText()"
-    [after]="newText()"
-    [lineContextSize]="4"
-    [isDynamicLineNumberWidthEnabled]="true"
-    [intraLineDiffMode]="intraLineDiffMode()"
-    style="width: 100%"
-    (selectedLineChange)="selectedLineChange($event)"
-  />
-
-  <br />
-  <ngx-side-by-side-diff
-    [title]="title()"
-    [before]="oldText()"
-    [after]="newText()"
-    [lineContextSize]="4"
-    [isDynamicLineNumberWidthEnabled]="true"
-    [intraLineDiffMode]="intraLineDiffMode()"
-    style="width: 100%"
-    (selectedLineChange)="selectedLineChange($event)"
-  />
-
-  <br />
-  <ngx-side-by-side-diff
-    class="ngx-diff-dark-theme"
-    title="github/user/src/main.ts (dark)"
-    [before]="oldText()"
-    [after]="newText()"
-    [lineContextSize]="4"
-    [isDynamicLineNumberWidthEnabled]="true"
-    [intraLineDiffMode]="intraLineDiffMode()"
-    style="width: 100%"
-    (selectedLineChange)="selectedLineChange($event)"
-  />
-
-  <br />
-  <inline-diff
-    class="my-inline-diff-theme"
-    [oldText]="oldText()"
-    [newText]="newText()"
-    [lineContextSize]="4"
-    style="width: 100%"
-    (selectedLineChange)="selectedLineChange($event)"
-  />
-
-  <br />
-  <ngx-unified-diff
-    [title]="title()"
-    [before]="oldText()"
-    [after]="newText()"
-    [lineContextSize]="4"
-    [isDynamicLineNumberWidthEnabled]="true"
-    style="width: 100%"
-    (selectedLineChange)="selectedLineChange($event)"
-  />
-</div>
+</main>
