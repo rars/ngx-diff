@@ -40,7 +40,7 @@
     "@types/node": "^26.1.2",
     "angular-eslint": "^22.0.0",
     "commit-and-tag-version": "^13.1.2",
-    "eslint": "^9.28.0",
+    "eslint": "^10.8.0",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-prefer-arrow": "1.2.3",
     "husky": "^9.0.11",
