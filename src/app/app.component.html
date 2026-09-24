@@ -78,10 +78,10 @@
     />
 
     <br />
-    <inline-diff
-      class="my-inline-diff-theme"
-      [oldText]="oldText()"
-      [newText]="newText()"
+    <ngx-unified-diff
+      class="my-unified-diff-theme"
+      [before]="oldText()"
+      [after]="newText()"
       [lineContextSize]="4"
       style="width: 100%"
       (selectedLineChange)="selectedLineChange($event)"

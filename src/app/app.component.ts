@@ -1,9 +1,4 @@
-import {
-  InlineDiffComponent,
-  IntraLineDiffMode,
-  SideBySideDiffComponent,
-  UnifiedDiffComponent,
-} from 'ngx-diff';
+import { IntraLineDiffMode, SideBySideDiffComponent, UnifiedDiffComponent } from 'ngx-diff';
 
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -13,7 +8,7 @@ import { DataLoaderService, ExampleDiff } from './services/data-loader/data-load
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  imports: [FormsModule, InlineDiffComponent, UnifiedDiffComponent, SideBySideDiffComponent],
+  imports: [FormsModule, UnifiedDiffComponent, SideBySideDiffComponent],
 })
 export class AppComponent {
   private readonly dataLoaderService = inject(DataLoaderService);
