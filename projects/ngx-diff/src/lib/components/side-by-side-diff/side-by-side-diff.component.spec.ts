@@ -88,7 +88,7 @@ describe('SideBySideDiffComponent with Vitest', () => {
     await vi.runAllTimersAsync();
     fixture.detectChanges();
 
-    expect(component.isCalculating()).toBe(false);
+    expect(component.debouncedIsCalculating.value()).toBe(false);
     expect(component.processedDiff().isContentEqual).toBe(true);
     expect(component.beforeLines().length).toBe(0);
     expect(component.afterLines().length).toBe(0);
@@ -169,7 +169,7 @@ describe('SideBySideDiffComponent with Vitest', () => {
       await vi.runAllTimersAsync();
       fixture.detectChanges();
 
-      expect(component.isCalculating()).toBe(false);
+      expect(component.debouncedIsCalculating.value()).toBe(false);
       expect(component.processedDiff().isContentEqual).toBe(false);
       expect(component.beforeLines().length).toBe(expectedBeforeLines.length);
       expect(component.afterLines().length).toBe(expectedAfterLines.length);

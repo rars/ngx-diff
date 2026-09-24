@@ -1,4 +1,4 @@
-@if (isCalculating()) {
+@if (debouncedIsCalculating.value()) {
   <div class="ufd-diff-title-bar">
     @if (processedDiff().title) {
       <span> {{ processedDiff().title }} </span>
