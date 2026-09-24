@@ -24,7 +24,7 @@ import { DiffMatchPatchService } from '../../services/diff-match-patch/diff-matc
 import { LineNumberPipe } from '../../pipes/line-number/line-number.pipe';
 import { NgClass } from '@angular/common';
 import { StyleCalculatorService } from '../../services/style-calculator/style-calculator.service';
-import { BehaviorSubject, debounceTime, startWith, switchMap } from 'rxjs';
+import { BehaviorSubject, debounceTime, Observable, startWith, switchMap } from 'rxjs';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ProgressBarComponent } from '../progress-bar/progress-bar.component';
 
@@ -114,10 +114,24 @@ export class UnifiedDiffComponent implements AfterViewInit {
     toObservable(this.diffData).pipe(
       takeUntilDestroyed(),
       debounceTime(50),
-      switchMap(async ({ title, before, after }) => {
+      switchMap(({ title, before, after }) => {
         this.isCalculatingSubject.next(true);
-        const diffs = await this.dmp.computeLineDiff(before, after);
-        return { title, diffs };
+
+        return new Observable<{ title: string | undefined; diffs: Diff[] }>((subscriber) => {
+          const abortController = new AbortController();
+
+          this.dmp
+            .computeLineDiff(before, after, { signal: abortController.signal })
+            .then((diffs) => {
+              subscriber.next({ title, diffs });
+              subscriber.complete();
+            })
+            .catch((err) => {
+              subscriber.error(err);
+            });
+
+          return () => abortController.abort();
+        });
       }),
       startWith({ title: undefined, diffs: [] }),
     ),
