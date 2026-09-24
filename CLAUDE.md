@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**ngx-diff** is an Angular component library for displaying text diffs with support for multiple visualization formats (unified, side-by-side, and inline). It's built on `diff-match-patch-ts` for diff calculation and supports performance optimization via Web Workers and comprehensive theming via CSS variables.
+**ngx-diff** is an Angular component library for displaying text diffs with support for multiple visualization formats (unified and side-by-side). It's built on `diff-match-patch-ts` for diff calculation and supports performance optimization via Web Workers and comprehensive theming via CSS variables.
 
 ## Project Structure
 
 - **projects/ngx-diff/**: The main library code
-  - `src/lib/components/`: Three diff components (unified-diff, side-by-side-diff, inline-diff)
+  - `src/lib/components/`: Two diff components (unified-diff, side-by-side-diff)
   - `src/lib/services/`: Core services (DiffMatchPatchService for diff calculation, StyleCalculatorService for styling)
   - `src/lib/pipes/`: Utilities like LineNumberPipe
   - `src/lib/common/`: Interfaces and types for diff data structures
@@ -39,18 +39,21 @@ npm lint
 ### Running Tests
 
 The project uses Vitest. Run with Angular build system:
+
 ```bash
 npm test  # Runs all tests
 ng test ngx-diff  # Alternative syntax
 ```
 
 To run tests in watch mode or see options:
+
 ```bash
 ng test ngx-diff --watch
 ng test ngx-diff --help
 ```
 
 Single test file:
+
 ```bash
 ng test ngx-diff --include='**/*.spec.ts'
 ```
@@ -67,11 +70,8 @@ ng test ngx-diff --include='**/*.spec.ts'
    - Two-column layout (before/after)
    - Better for visual comparison
 
-3. **InlineDiffComponent** (`src/lib/components/inline-diff/`)
-   - Deprecated as of v8.0.0, replaced by UnifiedDiffComponent
-   - May still be used in some demos/old code
+Both components accept:
 
-All three components accept:
 - `before` / `after`: Input strings to diff
 - `lineContextSize`: Number of context lines around changes
 - `intraLineDiffMode`: Type of intra-line highlighting ('none', 'chars', 'words', 'lines')
@@ -80,12 +80,14 @@ All three components accept:
 ### Services
 
 **DiffMatchPatchService** (`src/lib/services/diff-match-patch/`)
+
 - Wraps `diff-match-patch-ts` library
 - Handles diff calculation and optionally delegates to Web Worker
 - Supports custom `IDiffWebWorkerFactory` via DI token `NGX_DIFF_WEB_WORKER_FACTORY`
 - Key public methods compute diffs at line and character level
 
 **StyleCalculatorService** (`src/lib/services/style-calculator/`)
+
 - Computes inline CSS styles for individual diff segments
 - Handles CSS class and style application for highlighting
 
@@ -100,6 +102,7 @@ All three components accept:
 The library uses CSS variables for all styling. Default theme is in `projects/ngx-diff/src/styles/`.
 
 ### Key CSS Variables
+
 ```
 --ngx-diff-border-color
 --ngx-diff-font-size
@@ -111,6 +114,7 @@ The library uses CSS variables for all styling. Default theme is in `projects/ng
 ```
 
 Two built-in themes:
+
 - `ngx-diff-light-theme` (light mode)
 - `ngx-diff-dark-theme` (dark mode)
 
@@ -150,7 +154,6 @@ Version compatibility table in README.md correlates Angular versions to ngx-diff
 
 ## Recent Architecture Changes
 
-- **v8+**: Unified the inline-diff and regular diff components; InlineDiffComponent deprecated
 - **v13.1+**: Added Web Worker support for performance
 - **v13+**: Switched to CSS variable-based theming
 - **Angular 22+**: Uses signals and computed properties for reactivity

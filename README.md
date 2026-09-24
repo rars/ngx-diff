@@ -64,7 +64,7 @@ Angular component library for displaying diffs of text. [Demo](https://rars.gith
 
 ### Upgrading from v7.0.0
 
-In v8.0.0, `inline-diff` component has been deprecated and users should switch to the `ngx-unified-diff` component that has been added and provides equivalent functionality. `inline-diff` will be removed in the next release.
+In v8.0.0, `inline-diff` component has been deprecated and users should switch to the `ngx-unified-diff` component that has been added and provides equivalent functionality. `inline-diff` will be removed in the v17.0.0 release.
 
 ## Theming
 
