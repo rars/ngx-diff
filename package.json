@@ -27,7 +27,7 @@
   "devDependencies": {
     "@angular-devkit/core": "^22.0.1",
     "@angular-eslint/builder": "^22.0.0",
-    "@angular-eslint/schematics": "22.1.0",
+    "@angular-eslint/schematics": "22.5.0",
     "@angular/build": "^22.0.1",
     "@angular/cli": "^22.0.1",
     "@angular/compiler-cli": "^22.0.1",
@@ -49,7 +49,7 @@
     "prettier": "^3.5.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.0",
-    "vitest": "^4.0.13"
+    "vitest": "^5.0.1"
   },
   "standard-version": {
     "skip": {
