@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   computed,
+  debounced,
   effect,
   ElementRef,
   inject,
@@ -22,7 +23,7 @@ import { LineDiffType } from '../../common/line-diff-type';
 import { NgClass } from '@angular/common';
 import { LineDiffDescription, SideBySideLineSelectEvent } from '../../common/line-select-event';
 import { StyleCalculatorService } from '../../services/style-calculator/style-calculator.service';
-import { BehaviorSubject, debounceTime, Observable, startWith, switchMap } from 'rxjs';
+import { debounceTime, Observable, startWith, switchMap } from 'rxjs';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ProgressBarComponent } from '../progress-bar/progress-bar.component';
 
@@ -106,10 +107,8 @@ export class SideBySideDiffComponent implements AfterViewInit {
 
   public readonly selectedLineChange = output<SideBySideLineSelectEvent>();
 
-  private readonly isCalculatingSubject = new BehaviorSubject(false);
-  public readonly isCalculating = toSignal(
-    this.isCalculatingSubject.asObservable().pipe(debounceTime(50)),
-  );
+  private readonly isCalculating = signal(false);
+  public readonly debouncedIsCalculating = debounced(this.isCalculating, 50);
 
   public readonly beforeLines = signal<ILine[]>([]);
   public readonly afterLines = signal<ILine[]>([]);
@@ -121,7 +120,7 @@ export class SideBySideDiffComponent implements AfterViewInit {
       takeUntilDestroyed(),
       debounceTime(50),
       switchMap(({ title, before, after }) => {
-        this.isCalculatingSubject.next(true);
+        this.isCalculating.set(true);
 
         return new Observable<{ title: string | undefined; diffs: Diff[] }>((subscriber) => {
           const abortController = new AbortController();
@@ -151,7 +150,7 @@ export class SideBySideDiffComponent implements AfterViewInit {
 
   public constructor() {
     effect(() => {
-      this.isCalculatingSubject.next(false);
+      this.isCalculating.set(false);
 
       const { beforeLines, afterLines } = this.processedDiff();
       const mode = this.intraLineDiffMode();

@@ -4,6 +4,7 @@ import {
   AfterViewInit,
   Component,
   computed,
+  debounced,
   effect,
   ElementRef,
   inject,
@@ -24,7 +25,7 @@ import { DiffMatchPatchService } from '../../services/diff-match-patch/diff-matc
 import { LineNumberPipe } from '../../pipes/line-number/line-number.pipe';
 import { NgClass } from '@angular/common';
 import { StyleCalculatorService } from '../../services/style-calculator/style-calculator.service';
-import { BehaviorSubject, debounceTime, Observable, startWith, switchMap } from 'rxjs';
+import { debounceTime, Observable, startWith, switchMap } from 'rxjs';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ProgressBarComponent } from '../progress-bar/progress-bar.component';
 
@@ -104,18 +105,15 @@ export class UnifiedDiffComponent implements AfterViewInit {
   // This needs to be a signal, rather than computed(..) to support alterations when a placeholder is expanded.
   public readonly calculatedDiff = signal<LineDiff[]>([]);
 
-  private readonly isCalculatingSubject = new BehaviorSubject<boolean>(false);
-
-  protected readonly isCalculating = toSignal(
-    this.isCalculatingSubject.asObservable().pipe(debounceTime(50)),
-  );
+  private readonly isCalculating = signal(false);
+  protected readonly debouncedIsCalculating = debounced(this.isCalculating, 50);
 
   protected readonly diffs = toSignal(
     toObservable(this.diffData).pipe(
       takeUntilDestroyed(),
       debounceTime(50),
       switchMap(({ title, before, after }) => {
-        this.isCalculatingSubject.next(true);
+        this.isCalculating.set(true);
 
         return new Observable<{ title: string | undefined; diffs: Diff[] }>((subscriber) => {
           const abortController = new AbortController();
@@ -145,7 +143,7 @@ export class UnifiedDiffComponent implements AfterViewInit {
 
   public constructor() {
     effect(() => {
-      this.isCalculatingSubject.next(false);
+      this.isCalculating.set(false);
       const baseDiff = this.processedDiff().calculatedDiff;
       const mode = this.intraLineDiffMode();
       this.calculatedDiff.set(this.applyIntraLineDiffs(baseDiff, mode));
