@@ -243,15 +243,15 @@ export class SideBySideDiffComponent implements AfterViewInit {
     const newBefore: ILine[] = [];
     const newAfter: ILine[] = [];
 
-    const maxIndex = Math.min(beforeLines.length, afterLines.length);
+    const commonLength = Math.min(beforeLines.length, afterLines.length);
 
-    if (beforeLines.length < maxIndex || afterLines.length < maxIndex) {
+    if (beforeLines.length !== afterLines.length) {
       console.warn(
         `ngx-diff: something is not right ${beforeLines.length} lines in before and ${afterLines.length} lines in after do not match.`,
       );
     }
 
-    for (let i = 0; i < maxIndex; i++) {
+    for (let i = 0; i < commonLength; i++) {
       const b = beforeLines[i];
       const a = afterLines[i];
 
