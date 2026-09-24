@@ -4,6 +4,7 @@ import { inject, InjectionToken, OnDestroy, Service } from '@angular/core';
 
 import { InlineSegment } from '../../common/inline-segment.interface';
 import { IntraLineDiffMode } from '../../common/intra-line-diff-mode.type';
+import { Queue } from '../../common/queue';
 
 export interface IDiffWebWorkerFactory {
   createWorker(): Worker | undefined;
@@ -21,6 +22,10 @@ interface DiffWorkerErrorResponse {
   error: { message: string };
 }
 
+export interface ComputeLineDiffOptions {
+  signal?: AbortSignal;
+}
+
 export const NGX_DIFF_WEB_WORKER_FACTORY = new InjectionToken('NGX_DIFF_WEB_WORKER_FACTORY');
 
 @Service()
@@ -29,7 +34,13 @@ export class DiffMatchPatchService implements OnDestroy {
 
   private readonly promises = new Map<
     number,
-    { resolve: (value: Diff[]) => void; reject: (reason?: unknown) => void }
+    {
+      text1: string;
+      text2: string;
+      resolve: (value: Diff[]) => void;
+      reject: (reason?: unknown) => void;
+      signal?: AbortSignal;
+    }
   >();
 
   private readonly factory = inject<IDiffWebWorkerFactory>(NGX_DIFF_WEB_WORKER_FACTORY, {
@@ -38,32 +49,54 @@ export class DiffMatchPatchService implements OnDestroy {
 
   private worker?: Worker;
   private messageId = 0;
+  private activeMessageId: null | number = null;
+  private pendingMessageIdQueue = new Queue<number>();
 
   /**
    * Compute a line diff between the specified texts.
    * @param text1 Old text.
    * @param text2 New text.
+   * @param options Diff options.
    */
-  public computeLineDiff(text1: string, text2: string): Promise<Diff[]> {
+  public computeLineDiff(
+    text1: string,
+    text2: string,
+    options?: ComputeLineDiffOptions,
+  ): Promise<Diff[]> {
+    if (options?.signal?.aborted) {
+      return Promise.reject(new Error('Computation aborted by caller'));
+    }
+
     if (this.factory && this.isPotentiallyLongComputation(text1, text2)) {
       const worker = this.getOrCreateWorker();
 
       if (worker) {
         return new Promise<Diff[]>((resolve, reject) => {
           const id = this.messageId++;
-          this.promises.set(id, { resolve, reject });
+          this.promises.set(id, { text1, text2, resolve, reject, signal: options?.signal });
 
-          try {
-            worker.postMessage({ id, before: text1, after: text2 });
-          } catch (error) {
-            this.promises.delete(id);
-            reject(error);
+          if (this.activeMessageId === null) {
+            try {
+              worker.postMessage({ id, before: text1, after: text2 });
+              this.activeMessageId = id;
+            } catch (error) {
+              this.promises.delete(id);
+              reject(error);
+            }
+          } else {
+            this.pendingMessageIdQueue.enqueue(id);
           }
         });
       }
     }
 
-    return new Promise((resolve) => resolve(this.dmp.diff_lineMode(text1, text2)));
+    return new Promise((resolve, reject) => {
+      if (options?.signal?.aborted) {
+        reject(new Error('Computation aborted by caller'));
+      } else {
+        resolve(this.dmp.diff_lineMode(text1, text2));
+      }
+    });
   }
 
   /**
@@ -106,13 +139,7 @@ export class DiffMatchPatchService implements OnDestroy {
   public ngOnDestroy(): void {
     if (this.worker) {
       const error = new Error('DiffMatchPatchService is being destroyed.');
-      for (const promise of this.promises.values()) {
-        promise.reject(error);
-      }
-      this.promises.clear();
-
-      this.worker.terminate();
-      this.worker = undefined;
+      this.rejectAllAndTerminateWorker(error);
     }
   }
 
@@ -133,31 +160,75 @@ export class DiffMatchPatchService implements OnDestroy {
   private onWorkerMessage({
     data,
   }: MessageEvent<DiffWorkerSuccessResponse | DiffWorkerErrorResponse>): void {
-    const promise = this.promises.get(data.id);
-    if (!promise) {
-      console.error('Received a message from web worker with an unknown id.', data);
+    if (data.id !== this.activeMessageId) {
       return;
     }
 
-    if (data.status === 'success') {
-      promise.resolve(data.diffs);
-    } else if (data.status === 'error') {
-      console.error('Web worker error:', data.error);
-      promise.reject(new Error(data.error.message));
+    const promise = this.promises.get(data.id);
+
+    if (promise === undefined) {
+      console.error('Received a message from web worker with an unknown id.', data);
+    } else {
+      if (data.status === 'success') {
+        promise.resolve(data.diffs);
+      } else if (data.status === 'error') {
+        console.error('Web worker error:', data.error);
+        promise.reject(new Error(data.error.message));
+      }
+      this.promises.delete(data.id);
     }
-    this.promises.delete(data.id);
+
+    this.activeMessageId = null;
+    if (this.worker) {
+      while (!this.pendingMessageIdQueue.isEmpty()) {
+        const nextId = this.pendingMessageIdQueue.dequeue();
+        if (nextId !== undefined) {
+          const nextPromise = this.promises.get(nextId);
+          if (nextPromise === undefined) {
+            continue;
+          }
+
+          if (nextPromise.signal?.aborted) {
+            nextPromise.reject(new Error('Computation aborted by caller'));
+            this.promises.delete(nextId);
+            continue;
+          }
+
+          try {
+            this.worker.postMessage({
+              id: nextId,
+              before: nextPromise.text1,
+              after: nextPromise.text2,
+            });
+            this.activeMessageId = nextId;
+            break;
+          } catch (error) {
+            this.promises.delete(nextId);
+            nextPromise.reject(error);
+            continue;
+          }
+        }
+      }
+    }
   }
 
   private onWorkerError(error: ErrorEvent): void {
+    this.rejectAllAndTerminateWorker(error);
+  }
+
+  private rejectAllAndTerminateWorker(error: unknown): void {
     for (const promise of this.promises.values()) {
       promise.reject(error);
     }
     this.promises.clear();
+    this.activeMessageId = null;
 
-    if (this.worker) {
-      this.worker.terminate();
-      this.worker = undefined;
+    while (!this.pendingMessageIdQueue.isEmpty()) {
+      this.pendingMessageIdQueue.dequeue();
     }
+
+    this.worker?.terminate();
+    this.worker = undefined;
   }
 
   private isPotentiallyLongComputation(text1: string, text2: string): boolean {
