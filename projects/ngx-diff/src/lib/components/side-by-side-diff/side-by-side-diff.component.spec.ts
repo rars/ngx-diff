@@ -90,8 +90,8 @@ describe('SideBySideDiffComponent with Vitest', () => {
 
     expect(component.debouncedIsCalculating.value()).toBe(false);
     expect(component.processedDiff().isContentEqual).toBe(true);
-    expect(component.beforeLines().length).toBe(0);
-    expect(component.afterLines().length).toBe(0);
+    expect(component.displayedLines().before.length).toBe(0);
+    expect(component.displayedLines().after.length).toBe(0);
   });
 
   const inputsToOutputsCases: InputsToOutputsCase[] = [
@@ -171,17 +171,17 @@ describe('SideBySideDiffComponent with Vitest', () => {
 
       expect(component.debouncedIsCalculating.value()).toBe(false);
       expect(component.processedDiff().isContentEqual).toBe(false);
-      expect(component.beforeLines().length).toBe(expectedBeforeLines.length);
-      expect(component.afterLines().length).toBe(expectedAfterLines.length);
+      expect(component.displayedLines().before.length).toBe(expectedBeforeLines.length);
+      expect(component.displayedLines().after.length).toBe(expectedAfterLines.length);
 
       expectedBeforeLines.forEach((expectedLine, index) => {
-        expect(component.beforeLines()[index].type).toBe(expectedLine.type);
-        expect(component.beforeLines()[index].line).toBe(expectedLine.line);
+        expect(component.displayedLines().before[index].type).toBe(expectedLine.type);
+        expect(component.displayedLines().before[index].line).toBe(expectedLine.line);
       });
 
       expectedAfterLines.forEach((expectedLine, index) => {
-        expect(component.afterLines()[index].type).toBe(expectedLine.type);
-        expect(component.afterLines()[index].line).toBe(expectedLine.line);
+        expect(component.displayedLines().after[index].type).toBe(expectedLine.type);
+        expect(component.displayedLines().after[index].line).toBe(expectedLine.line);
       });
     },
   );
@@ -237,23 +237,23 @@ describe('SideBySideDiffComponent with Vitest', () => {
     fixture.detectChanges();
 
     const placeholderIndex = component
-      .beforeLines()
-      .findIndex((l) => l.type === LineDiffType.Placeholder);
+      .displayedLines()
+      .before.findIndex((l) => l.type === LineDiffType.Placeholder);
     expect(placeholderIndex, 'placeholder should be created').toBeGreaterThan(-1);
 
-    const placeholderLine = component.beforeLines()[placeholderIndex];
+    const placeholderLine = component.displayedLines().before[placeholderIndex];
     expect(placeholderLine.line).toContain('hidden lines');
-    const beforeLineCount = component.beforeLines().length;
+    const beforeLineCount = component.displayedLines().before.length;
 
     component.selectLine(placeholderIndex);
     fixture.detectChanges();
 
-    expect(component.beforeLines().length, 'number of lines should grow').toBeGreaterThan(
+    expect(component.displayedLines().before.length, 'number of lines should grow').toBeGreaterThan(
       beforeLineCount,
     );
     const newPlaceholderIndex = component
-      .beforeLines()
-      .findIndex((l) => l.type === LineDiffType.Placeholder);
+      .displayedLines()
+      .before.findIndex((l) => l.type === LineDiffType.Placeholder);
 
     expect(newPlaceholderIndex, 'placeholder should be gone').toBe(-1);
   });

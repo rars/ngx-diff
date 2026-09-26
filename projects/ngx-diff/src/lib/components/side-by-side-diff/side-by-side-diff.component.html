@@ -25,7 +25,7 @@
     <div class="sbs-diff">
       <!-- before -->
       <div class="sbs-diff-margin">
-        @for (lineDiff of beforeLines(); track lineDiff.id; let idx = $index) {
+        @for (lineDiff of displayedLines().before; track lineDiff.id; let idx = $index) {
           <div
             class="line-selector"
             [ngClass]="
@@ -40,7 +40,7 @@
       </div>
       <div class="sbs-diff-content">
         <div class="sbs-diff-content-wrapper">
-          @for (lineDiff of beforeLines(); track lineDiff.id; let idx = $index) {
+          @for (lineDiff of displayedLines().before; track lineDiff.id; let idx = $index) {
             <div
               class="line-content sbs-diff-text"
               [ngClass]="
@@ -61,7 +61,7 @@
       </div>
       <!-- after -->
       <div class="sbs-diff-margin">
-        @for (lineDiff of afterLines(); track lineDiff.id; let idx = $index) {
+        @for (lineDiff of displayedLines().after; track lineDiff.id; let idx = $index) {
           <div
             class="line-selector"
             [ngClass]="
@@ -76,7 +76,7 @@
       </div>
       <div class="sbs-diff-content">
         <div class="sbs-diff-content-wrapper">
-          @for (lineDiff of afterLines(); track lineDiff.id; let idx = $index) {
+          @for (lineDiff of displayedLines().after; track lineDiff.id; let idx = $index) {
             <div
               class="line-content sbs-diff-text"
               [ngClass]="
