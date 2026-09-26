@@ -110,8 +110,10 @@ export class SideBySideDiffComponent implements AfterViewInit {
   private readonly isCalculating = signal(false);
   public readonly debouncedIsCalculating = debounced(this.isCalculating, 50);
 
-  public readonly beforeLines = signal<ILine[]>([]);
-  public readonly afterLines = signal<ILine[]>([]);
+  public readonly displayedLines = signal<{ before: ILine[]; after: ILine[] }>({
+    before: [],
+    after: [],
+  });
 
   public selectedLineIndex?: number;
 
@@ -143,10 +145,14 @@ export class SideBySideDiffComponent implements AfterViewInit {
     { requireSync: true },
   );
 
-  public readonly processedDiff = computed(() => ({
-    ...this.calculateLineDiffs(this.lineDiffs().diffs),
-    title: this.lineDiffs().title,
-  }));
+  public readonly processedDiff = computed(() => {
+    const { diffs, title } = this.lineDiffs();
+
+    return {
+      ...this.calculateLineDiffs(diffs),
+      title,
+    };
+  });
 
   public constructor() {
     effect(() => {
@@ -161,8 +167,7 @@ export class SideBySideDiffComponent implements AfterViewInit {
         mode,
       );
 
-      this.beforeLines.set(annotatedBefore);
-      this.afterLines.set(annotatedAfter);
+      this.displayedLines.set({ before: annotatedBefore, after: annotatedAfter });
     });
   }
 
@@ -201,8 +206,10 @@ export class SideBySideDiffComponent implements AfterViewInit {
   public selectLine(index: number): void {
     this.selectedLineIndex = index;
 
-    const selectedBeforeLine = this.beforeLines()[index];
-    const selectedAfterLine = this.afterLines()[index];
+    const displayedLines = this.displayedLines();
+
+    const selectedBeforeLine = displayedLines.before[index];
+    const selectedAfterLine = displayedLines.after[index];
 
     const getLineDescription = (obj: ILine): LineDiffDescription => {
       return {
@@ -275,16 +282,14 @@ export class SideBySideDiffComponent implements AfterViewInit {
   private expandPlaceholder(index: number, placeholder: ILine): void {
     const replacementLines = this.getPlaceholderReplacementLines(placeholder);
 
-    this.beforeLines.update((beforeLines) => {
-      const newBeforeLines = [...beforeLines];
+    this.displayedLines.update(({ before, after }) => {
+      const newBeforeLines = [...before];
       newBeforeLines.splice(index, 1, ...replacementLines.beforeLineDiffs);
-      return newBeforeLines;
-    });
 
-    this.afterLines.update((afterLines) => {
-      const newAfterLines = [...afterLines];
+      const newAfterLines = [...after];
       newAfterLines.splice(index, 1, ...replacementLines.afterLineDiffs);
-      return newAfterLines;
+
+      return { before: newBeforeLines, after: newAfterLines };
     });
   }
 
